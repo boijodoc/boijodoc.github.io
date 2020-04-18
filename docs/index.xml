@@ -1,11 +1,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>보이조 – 문서</title>
-    <link>https://boijodoc.github.io/docs/</link>
+    <link>https://elk.pol4.dev/docs/</link>
     <description>Recent content in 문서 on 보이조</description>
     <generator>Hugo -- gohugo.io</generator>
     
-	  <atom:link href="https://boijodoc.github.io/docs/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://elk.pol4.dev/docs/index.xml" rel="self" type="application/rss+xml" />
     
     
       
