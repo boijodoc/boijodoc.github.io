@@ -1,0 +1,18 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>보이조 – ELK 스택 v7.6</title>
+    <link>https://elk.pol4.dev/docs-7.6/</link>
+    <description>Recent content in ELK 스택 v7.6 on 보이조</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 19 Apr 2020 00:00:00 +0000</lastBuildDate>
+    
+	  <atom:link href="https://elk.pol4.dev/docs-7.6/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+  </channel>
+</rss>

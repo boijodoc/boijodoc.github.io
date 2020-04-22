@@ -1,11 +1,12 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>보이조 – 문서</title>
-    <link>https://elk.pol4.dev/docs/</link>
-    <description>Recent content in 문서 on 보이조</description>
+    <title>보이조 – ELK 스택 구축하기</title>
+    <link>https://elk.pol4.dev/docs-7.6/elk-%EC%8A%A4%ED%83%9D-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0/</link>
+    <description>Recent content in ELK 스택 구축하기 on 보이조</description>
     <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 19 Apr 2020 00:00:00 +0000</lastBuildDate>
     
-	  <atom:link href="https://elk.pol4.dev/docs/index.xml" rel="self" type="application/rss+xml" />
+	  <atom:link href="https://elk.pol4.dev/docs-7.6/elk-%EC%8A%A4%ED%83%9D-%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0/index.xml" rel="self" type="application/rss+xml" />
     
     
       
