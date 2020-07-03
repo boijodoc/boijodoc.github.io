@@ -1,0 +1,680 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>보이조 – 웹 서버</title>
+    <link>https://elk.pol4.dev/docs-7.6/%EC%9B%B9-%EC%84%9C%EB%B2%84/</link>
+    <description>Recent content in 웹 서버 on 보이조</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Wed, 20 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	  <atom:link href="https://elk.pol4.dev/docs-7.6/%EC%9B%B9-%EC%84%9C%EB%B2%84/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs-7.6: 아파치</title>
+      <link>https://elk.pol4.dev/docs-7.6/%EC%9B%B9-%EC%84%9C%EB%B2%84/apache/</link>
+      <pubDate>Wed, 20 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://elk.pol4.dev/docs-7.6/%EC%9B%B9-%EC%84%9C%EB%B2%84/apache/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;아파치-로그-통합-관리하기&#34;&gt;아파치 로그 통합 관리하기&lt;/h2&gt;
+&lt;p&gt;앞서 설치한 ELK 스택에 아파치의 로그를 통합해서 관리할 수 있습니다. 아파치 로그를 통함 관리하는 방법에 대해 알아보도록 하겠습니다.&lt;/p&gt;
+&lt;h2 id=&#34;아파치-웹-로그-종류&#34;&gt;아파치 웹 로그 종류&lt;/h2&gt;
+&lt;p&gt;로그를 통합 관리하기 위해선 어떤 로그들이 있는지 알아야 합니다. 아파치에는 기본적으로 두가지 로그가 제공되는데 그 종류는 다음과 같습니다.&lt;/p&gt;
+&lt;table&gt;
+    &lt;thead&gt;
+        &lt;th&gt;파일 이름&lt;/th&gt;
+        &lt;th&gt;내용&lt;/th&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;acces_log&lt;/td&gt;
+            &lt;td&gt;접속 기록&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;error_log&lt;/td&gt;
+            &lt;td&gt;상세 에러 정보&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;아파치-웹-로그-형식&#34;&gt;아파치 웹 로그 형식&lt;/h2&gt;
+&lt;p&gt;로그를 파싱해서 Elasticsearch에 저장하려면 로그가 어떻게 생겼는지 알아야 합니다. 로그는 필드로 구분되어 지정된 형식으로 쓰이기 때문에 일종의 패턴이 있습니다.  아파치의 기본 로그 형식에 대해서 알아보겠습니다. 사실 추가적인 설정을 통해 로그에 포함되는 정보의 양을 늘릴 수 있지만 먼저 기본적인 로그들을 한번 이용해보도록 하겠습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;access_log&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# [원격지 호스트] [원격지 사용자 이름] [인증이 요청된 원격 사용자 이름] [요청한 시간과 날짜] [HTTP 메소드를 포함한 요청의 첫 라인] [HTTP 상태 코드] [헤더를 제외한 전송된 크기]
+196.52.43.100 - - [26/May/2020:04:26:36 +0900] &amp;quot;GET / HTTP/1.1&amp;quot; 200 1711
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;access_log에서는 얻어낼 정보가 많은 것 같습니다. 원격지 호스트를 이용해서 요청한 사람의 위치를 알아낼 수 있고, 어떤 페이지에 어떤 메소드로 요청이 많이 오는지 알 수 있습니다. 어떤 시간이나 어떤 분기에 요청이 많이 들어오는지 분석해서 서버를 스케일 다운/업, 인/아웃 할 지 결정할 수 있고, 요청의 크기를 통해 공격인이 아닌지도 어느 정도 예측이 가능할 것 같습니다.&lt;/p&gt;
+&lt;p&gt;하지만 access_log의 기본 형식에서는 어떤 Virtual Host에 대한 요청인지 표시하지 않습니다. 만약 한 서버에서 여러개의 Virtual Host를 운영하고 있다면 아파치의 설정을 변경에 로그의 포맷을 아래와 같이 변경합니다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# /etc/apache2/apache2.conf
+  
+# 없다면 추가
+LogFormat &amp;quot;%v:%p %h %l %u %t \&amp;quot;%r\&amp;quot; %&amp;gt;s %O \&amp;quot;%{Referer}i\&amp;quot; \&amp;quot;%{User-Agent}i\&amp;quot;&amp;quot; vhost_combined
+  
+# Virtual Host 태그 안에 추가
+CustomLog logs/access.log vhost_combined
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;error_log&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# [요청한 시간과 날짜] [에러 레벨] [pid] [client [IP:Port]] [로그 메시지]
+[Fri May 26 04:13:58.570775 2020] [php7:notice] [pid 2093] [client ::1:56854] PHP Notice:  Undefined variable: remember in /srv/http/getSalt.php on line 13, referer: http://localhost:3000/~120140261/app/login
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;반면 error_log에서는 사실 분석을 자동화하기는 힘들 것 같습니다. 공격을 시도하는 방법은 셀 수 없을 정도로 여러 방법이 있고 어떠한 에러가 발생할지 예측하기는 사실 힘듭니다. 다만 에러 레벨을 통해 크리티컬한 에러들을 모아서 따로 분석할 수 있을 것 같습니다. 또는 에러 레벨로 1차적으로 뽑아낸 로그 메시지들의 분석을 자동화할 수 있을 것 같습니다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;filebeat-설치-및-설정&#34;&gt;Filebeat 설치 및 설정&lt;/h2&gt;
+&lt;p&gt;위에 분석해본 아파치 웹 로그 형식에 따라 로그들을 파싱해서 Elasticsearch에 저장해보도록 하겠습니다. 사실 Logstash만으로도 파일을 읽어들여 Elasticsearch에 저장할 수 있습니다. 하지만, 새로운 데이터가 있을 때 지속적으로 읽어서 Elasticsearch에 저장하기 위해선 Filebeat를 사용해야 합니다. Filebeat를 설치한 후 아파치의 로그를 읽어 Logstash로 전송하게 해보도록 하겠습니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Filebeat의 버전을 ELK 스택과 맞춰줘야 합니다!&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://elastic.co&#34;&gt;Elastic 홈페이지&lt;/a&gt; 접속 후 우측 위에 있는 &lt;strong&gt;무료로 시작&lt;/strong&gt;을 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/elastic-home.png&#34; alt=&#34;Elastic 홈페이지&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Beats의 &lt;strong&gt;다운로드&lt;/strong&gt; 버튼을 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/filebeat-download-1.png&#34; alt=&#34;Filebeat 다운로드 1&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Filebeat의 &lt;strong&gt;다운로드&lt;/strong&gt; 버튼을 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/filebeat-download-2.png&#34; alt=&#34;Filebeat 다운로드 2&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;버전을 확인하고 운영체제에 맞는 파일을 다운로드합니다.&lt;/p&gt;
+&lt;table&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;운영체제&lt;/th&gt;
+            &lt;th&gt;파일&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Windows&lt;/td&gt;
+            &lt;td&gt;WINDOWS, MSI&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;MacOS&lt;/td&gt;
+            &lt;td&gt;MACOS&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Debian, Ubuntu etc.&lt;/td&gt;
+            &lt;td&gt;DEB&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Red Hat, Fedora, CentOS, OpenSUSE etc.&lt;/td&gt;
+            &lt;td&gt;RPM&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Other Linux&lt;/td&gt;
+            &lt;td&gt;LINUX&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/filebeat-download-3.png&#34; alt=&#34;Filebeat 다운로드 3&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;이전 버전을 설치하고 싶다면 아래에 있는 &lt;strong&gt;past releases&lt;/strong&gt; 링크를 클릭해서 맞는 버전을 다운로드합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/filebeat-download-4.png&#34; alt=&#34;Filebeat 다운로드 3&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;패키지 관리자로 다운로드한 Filebeat를 설치합니다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Windows&lt;/span&gt;
+logstash-버전-아키텍처.exe or filebeat-버전-아키텍처.msi 실행
+   
+&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Debian, Ubuntu&lt;/span&gt;
+sudo apt-get install ./filebeat-버전-아키텍처.deb
+   
+&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Red Hat 8 이상, Fedora 22 이상&lt;/span&gt;
+sudo dnf install ./filebeat-버전-아키텍처.rpm
+   
+&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Red Hat 7 이하, Fedora 21 이하, CentOS&lt;/span&gt;
+sudo yum install ./filebeat-버전-아키텍처.rpm
+   
+&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# OpenSUSE&lt;/span&gt;
+sudo zypper install ./filebeat-버전-아키텍처.rpm
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Filebeat의 Apache 모듈 활성 합니다. 설정에서 기본 false인 reload.enable을 true로 바꿔줍니다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# /etc/filebeat/filebeat.yml&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#============================= Filebeat modules ===============================&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;filebeat.config.modules&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Glob pattern for configuration loading&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;path&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;${path.config}/modules.d/&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;*.yml&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# 기본값 false. true로 변경하기&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Set to true to enable config reloading&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;reload.enabled&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Period on which files under path should be checked for changes&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#reload.period: 10s&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;sudo filebeat modules &lt;span style=&#34;color:#204a87&#34;&gt;enable&lt;/span&gt; apache
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Filebeat는 OS를 감지해서 아파치 로그의 위치를 결정합니다. 만약 로그의 위치를 바꿨거나 여러 개의 로그를 읽어오고 싶다면 Apache 모듈 설정을 변경해서 로그의 위치를 알려줘야 합니다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# /etc/filebeat/modules.d/apache.yml&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Module: apache&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Docs: https://www.elastic.co/guide/en/beats/filebeat/7.6/filebeat-module-apache.html&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;- &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;module&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;apache&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Access logs&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;access&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;enabled&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Set custom paths for the log files. If left empty,&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Filebeat will choose the paths depending on your OS.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;var.paths&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;[경로]&amp;#34;&lt;/span&gt;...&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;]&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Error logs&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;error&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;enabled&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Set custom paths for the log files. If left empty,&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Filebeat will choose the paths depending on your OS.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;    &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;var.paths&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;[경로]&amp;#34;&lt;/span&gt;...&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;]&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Filebeat에서 읽은 데이터를 Logstash로 보내도록 설정합니다. Elasticsearch output 관련 설정을 주석 처리하고 Logstash output 관련 설정을 주석 해제하면 됩니다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# /etc/filebeat/filebeat.yml&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#================================ Outputs =====================================&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Configure what output to use when sending the data collected by the beat.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#-------------------------- Elasticsearch output ------------------------------&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#output.elasticsearch:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Array of hosts to connect to.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#hosts: [&amp;#34;localhost:9200&amp;#34;]&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Protocol - either `http` (default) or `https`.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#protocol: &amp;#34;https&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Authentication credentials - either API key or username/password.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#api_key: &amp;#34;id:api_key&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#username: &amp;#34;elastic&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#password: &amp;#34;changeme&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#----------------------------- Logstash output --------------------------------&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;output.logstash&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# The Logstash hosts&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;hosts&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;localhost:5044&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;]&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Optional SSL. By default is off.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# List of root certificates for HTTPS server verifications&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#ssl.certificate_authorities: [&amp;#34;/etc/pki/root/ca.pem&amp;#34;]&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Certificate for SSL client authentication&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#ssl.certificate: &amp;#34;/etc/pki/client/cert.pem&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Client Certificate Key&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#ssl.key: &amp;#34;/etc/pki/client/cert.key&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;logstash-설정&#34;&gt;Logstash 설정&lt;/h2&gt;
+&lt;p&gt;앞서 Logstash를 설치했지만 Logstash의 설정은 어떤 데이터를 처리하느냐에 따라 달라지기 때문에 하지 않았습니다. Apache의 로그 데이터를 가공해서 Elasticsearch 저장할 수 있도록 Logstash를 설정합니다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;5044포트에 Filebeat로부터 데이터를 입력받아 Apache2에 맞게 데이터를 가공해서 Elasticsearch의 apache index에 저장하도록 설정합니다.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;# /etc/logstash/conf.d/logstash.conf
+
+input {
+  beats {
+    port =&amp;gt; 5044
+    host =&amp;gt; &amp;quot;0.0.0.0&amp;quot;
+  }
+}
+filter {
+  if [event][module] == &amp;quot;apache&amp;quot; {
+    if [fileset][name] == &amp;quot;access&amp;quot; {
+      grok {
+        match =&amp;gt; { &amp;quot;message&amp;quot; =&amp;gt; [&amp;quot;%{IPORHOST:[apache2][access][remote_ip]} - %{DATA:[apache2][access][user_name]} \[%{HTTPDATE:[apache2][access][time]}\] \&amp;quot;%{WORD:[apache2][access][method]} %{DATA:[apache2][access][url]} HTTP/%{NUMBER:[apache2][access][http_version]}\&amp;quot; %{NUMBER:[apache2][access][response_code]} %{NUMBER:[apache2][access][body_sent][bytes]}( \&amp;quot;%{DATA:[apache2][access][referrer]}\&amp;quot;)?( \&amp;quot;%{DATA:[apache2][access][agent]}\&amp;quot;)?&amp;quot;,
+          &amp;quot;%{IPORHOST:[apache2][access][remote_ip]} - %{DATA:[apache2][access][user_name]} \\[%{HTTPDATE:[apache2][access][time]}\\] \&amp;quot;-\&amp;quot; %{NUMBER:[apache2][access][response_code]} -&amp;quot; ] }
+        remove_field =&amp;gt; &amp;quot;message&amp;quot;
+      }
+      mutate {
+        add_field =&amp;gt; { &amp;quot;read_timestamp&amp;quot; =&amp;gt; &amp;quot;%{@timestamp}&amp;quot; }
+      }
+      date {
+        match =&amp;gt; [ &amp;quot;[apache2][access][time]&amp;quot;, &amp;quot;dd/MMM/YYYY:H:m:s Z&amp;quot; ]
+        remove_field =&amp;gt; &amp;quot;[apache2][access][time]&amp;quot;
+      }
+      useragent {
+        source =&amp;gt; &amp;quot;[apache2][access][agent]&amp;quot;
+        target =&amp;gt; &amp;quot;[apache2][access][user_agent]&amp;quot;
+        remove_field =&amp;gt; &amp;quot;[apache2][access][agent]&amp;quot;
+      }
+      geoip {
+        source =&amp;gt; &amp;quot;[apache2][access][remote_ip]&amp;quot;
+        target =&amp;gt; &amp;quot;[apache2][access][geoip]&amp;quot;
+      }
+    }
+    else if [fileset][name] == &amp;quot;error&amp;quot; {
+      grok {
+        match =&amp;gt; { &amp;quot;message&amp;quot; =&amp;gt; [&amp;quot;\[%{APACHE_TIME:[apache2][error][timestamp]}\] \[%{LOGLEVEL:[apache2][error][level]}\]( \[client %{IPORHOST:[apache2][error][client]}\])? %{GREEDYDATA:[apache2][error][message]}&amp;quot;,
+          &amp;quot;\[%{APACHE_TIME:[apache2][error][timestamp]}\] \[%{DATA:[apache2][error][module]}:%{LOGLEVEL:[apache2][error][level]}\] \[pid %{NUMBER:[apache2][error][pid]}(:tid %{NUMBER:[apache2][error][tid]})?\]( \[client %{IPORHOST:[apache2][error][client]}\])? %{GREEDYDATA:[apache2][error][message1]}&amp;quot; ] }
+        pattern_definitions =&amp;gt; {
+          &amp;quot;APACHE_TIME&amp;quot; =&amp;gt; &amp;quot;%{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{YEAR}&amp;quot;
+        }
+        remove_field =&amp;gt; &amp;quot;message&amp;quot;
+      }
+      mutate {
+        rename =&amp;gt; { &amp;quot;[apache2][error][message1]&amp;quot; =&amp;gt; &amp;quot;[apache2][error][message]&amp;quot; }
+      }
+      date {
+        match =&amp;gt; [ &amp;quot;[apache2][error][timestamp]&amp;quot;, &amp;quot;EEE MMM dd H:m:s YYYY&amp;quot;, &amp;quot;EEE MMM dd H:m:s.SSSSSS YYYY&amp;quot; ]
+        remove_field =&amp;gt; &amp;quot;[apache2][error][timestamp]&amp;quot;
+      }
+    }
+  }
+}
+output {
+  elasticsearch {
+    hosts =&amp;gt; localhost
+    manage_template =&amp;gt; false
+    index =&amp;gt; &amp;quot;apache&amp;quot;
+  }를
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;index-초기-설정&#34;&gt;Index 초기 설정&lt;/h2&gt;
+&lt;p&gt;Logstash와 Filebeat를 실행해서 데이터를 저장하기 전에 위치 정보 같은 특별한 정보들은 Elasticsearch에서 제대로 인식할 수 있도록 미리 설정해야합니다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Kibana에 접속해서 Explore my own 링크를 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-start.png&#34; alt=&#34;Kibana main&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Kibana의 왼쪽 메뉴에서 Dev Tools 버튼을 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-dev-tool.png&#34; alt=&#34;Kibana dev tools 1&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;연결된 Elasticsearch에 아래 쿼리를 실행해서 위치 정보에 대한 초기 설정을 진행합니다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;PUT apache
+{
+  &amp;quot;mappings&amp;quot; : { 
+    &amp;quot;properties&amp;quot;: {
+      &amp;quot;apache2.access.geoip.location&amp;quot; : { 
+        &amp;quot;type&amp;quot; : &amp;quot;geo_point&amp;quot;
+      }
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-index-1.png&#34; alt=&#34;Create index 1&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-index-2.png&#34; alt=&#34;Create index 2&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;logstash-filebeat-실행&#34;&gt;Logstash, Filebeat 실행&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;sudo systemctl &lt;span style=&#34;color:#204a87&#34;&gt;enable&lt;/span&gt; --now logstash filebeat
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;index-패턴-생성&#34;&gt;Index 패턴 생성&lt;/h2&gt;
+&lt;p&gt;Elasticsearch에서 저장된 데이터를 사용하기 전에 index 식별과 필드의 설정을 위해서 반드시 index 패턴을 생성해야 합니다. 아래는 위 설정으로 저장된 Apache의 로그 데이터 index의 index 패턴을 생성하는 방법입니다.&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;Kibana의 왼쪽 메뉴에서 Dev Tools 버튼을 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-dev-tool.png&#34; alt=&#34;Kibana dev tools 1&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;연결된 Elasticsearch에 데이터가 정상적으로 저장되고 있는지 확인하는 쿼리를 보냅니다. 하나 이상의 document라도 있다면 데이터의 입력이 시작된 것입니다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET apache/_count
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-make-pattern-1.png&#34; alt=&#34;Kibana dev tools 1&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-make-pattern-2.png&#34; alt=&#34;Kibana dev tools 2&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;다음과 같이 document의 개수가 확인되었다면 index 패턴을 생성하기 위해 왼쪽 메뉴에서 Management 버튼을 클릭합니다. 그 후 Kibana 아래 Index Patterns 버튼을 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-make-pattern-3.png&#34; alt=&#34;Kibana management 3&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-make-pattern-4.png&#34; alt=&#34;Kibana management 4&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create index pattern 버튼을 클릭해서 index 패턴 생성을 시작합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-make-pattern-5.png&#34; alt=&#34;Kibana management 5&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Index 이름을 입력하고 Next step을 클릭합니다. 와일드카드 문자도 사용 가능합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-make-pattern-6.png&#34; alt=&#34;Kibana management 6&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;@timestamp로 시간 필터 필드를 설정 후 Create index pattern 버튼을 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-make-pattern-7.png&#34; alt=&#34;Kibana management 7&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;document-확인하기&#34;&gt;Document 확인하기&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;생성된 index 패턴을 확인한 뒤 저장된 데이터를 보기 위해서 왼쪽 메뉴에서 Discover를 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-check-index-1.png&#34; alt=&#34;Kibana discover 1&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;오른쪽 위 시간 필터를 보면 기본으로 최근 15분의 데이터를 불러옵니다. 하지만 최근 15분의 데이터가 없기 때문에 아무것도 보이지 않습니다. 시간 필터를 조절해서 데이터를 확인할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-check-index-2.png&#34; alt=&#34;Kibana discover 2&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-check-index-3.png&#34; alt=&#34;Kibana discover 3&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs-7.6: 엔진엑스</title>
+      <link>https://elk.pol4.dev/docs-7.6/%EC%9B%B9-%EC%84%9C%EB%B2%84/nginx/</link>
+      <pubDate>Wed, 20 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://elk.pol4.dev/docs-7.6/%EC%9B%B9-%EC%84%9C%EB%B2%84/nginx/</guid>
+      <description>
+        
+        
+        &lt;h2 id=&#34;엔진엑스-로그-통합-관리하기&#34;&gt;엔진엑스 로그 통합 관리하기&lt;/h2&gt;
+&lt;p&gt;앞서 설치한 ELK 스택에 엔진엑스의 로그를 통합해서 관리할 수 있습니다. 엔진엑스 로그를 통합 관리하는 방법에 대해 알아보도록 하겠습니다.&lt;/p&gt;
+&lt;h2 id=&#34;엔진엑스-웹-로그-종류&#34;&gt;엔진엑스 웹 로그 종류&lt;/h2&gt;
+&lt;p&gt;로그를 통합 관리하기 위해선 어떤 로그들이 있는지 알아야 합니다. 엔진엑스에는 기본적으로 두가지 로그가 제공되는데 그 종류는 다음과 같습니다.&lt;/p&gt;
+&lt;table&gt;
+    &lt;thead&gt;
+        &lt;th&gt;파일 이름&lt;/th&gt;
+        &lt;th&gt;내용&lt;/th&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;acces_log&lt;/td&gt;
+            &lt;td&gt;접속 기록&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;error_log&lt;/td&gt;
+            &lt;td&gt;상세 에러 정보&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;엔진엑스-웹-로그-형식&#34;&gt;엔진엑스 웹 로그 형식&lt;/h2&gt;
+&lt;p&gt;로그를 파싱해서 Elasticsearch에 저장하려면 로그가 어떻게 생겼는지 알아야 합니다. 로그는 필드로 구분되어 지정된 형식으로 쓰이기 때문에 일종의 패턴이 있습니다.  엔진엑스의 기본 로그 형식에 대해서 알아보겠습니다. 사실 추가적인 설정을 통해 로그에 포함되는 정보의 양을 늘릴 수 있지만 먼저 기본적인 로그들을 한번 이용해보도록 하겠습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;access_log&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# [원격지 호스트] [원격지 사용자 이름] [인증이 요청된 원격 사용자 이름] [요청한 시간과 날짜] [HTTP 메소드를 포함한 요청의 첫 라인] [HTTP 상태 코드] [헤더를 제외한 전송된 크기] [이전 페이지 URL] [HTTP 요청에 사용된 브라우저 타입] [원격지 사용자가 사용한 브라우저]
+127.0.0.1 - - [03/Jul/2020:17:33:11 +0900] &amp;quot;GET / HTTP/1.1&amp;quot; 304 0 &amp;quot;-&amp;quot; &amp;quot;Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:77.0) Gecko/20100101 Firefox/77.0&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;access_log에서는 얻어낼 정보가 많은 것 같습니다. 원격지 호스트를 이용해서 요청한 사람의 위치를 알아낼 수 있고, 어떤 페이지에 어떤 메소드로 요청이 많이 오는지 알 수 있습니다. 어떤 시간이나 어떤 분기에 요청이 많이 들어오는지 분석해서 서버를 스케일 다운/업, 인/아웃 할 지 결정할 수 있고, 요청의 크기를 통해 공격인이 아닌지도 어느 정도 예측이 가능할 것 같습니다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;error_log&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# [요청한 시간과 날짜] [에러 레벨] [pid] [client [IP:Port]] [로그 메시지]
+[Fri May 26 04:13:58.570775 2020] [php7:notice] [pid 2093] [client ::1:56854] PHP Notice:  Undefined variable: remember in /srv/http/getSalt.php on line 13, referer: http://localhost:3000/~120140261/app/login
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;반면 error_log에서는 사실 분석을 자동화하기는 힘들 것 같습니다. 공격을 시도하는 방법은 셀 수 없을 정도로 여러 방법이 있고 어떠한 에러가 발생할지 예측하기는 사실 힘듭니다. 다만 에러 레벨을 통해 크리티컬한 에러들을 모아서 따로 분석할 수 있을 것 같습니다. 또는 에러 레벨로 1차적으로 뽑아낸 로그 메시지들의 분석을 자동화할 수 있을 것 같습니다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;filebeat-설치-및-설정&#34;&gt;Filebeat 설치 및 설정&lt;/h2&gt;
+&lt;p&gt;위에 분석해본 엔진엑스 웹 로그 형식에 따라 로그들을 파싱해서 Elasticsearch에 저장해보도록 하겠습니다. 사실 Logstash만으로도 파일을 읽어들여 Elasticsearch에 저장할 수 있습니다. 하지만, 새로운 데이터가 있을 때 지속적으로 읽어서 Elasticsearch에 저장하기 위해선 Filebeat를 사용해야 합니다. Filebeat를 설치한 후 엔진엑스의 로그를 읽어 Logstash로 전송하게 해보도록 하겠습니다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Filebeat의 버전을 ELK 스택과 맞춰줘야 합니다!&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&#34;https://elastic.co&#34;&gt;Elastic 홈페이지&lt;/a&gt; 접속 후 우측 위에 있는 &lt;strong&gt;무료로 시작&lt;/strong&gt;을 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/elastic-home.png&#34; alt=&#34;Elastic 홈페이지&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Beats의 &lt;strong&gt;다운로드&lt;/strong&gt; 버튼을 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/filebeat-download-1.png&#34; alt=&#34;Filebeat 다운로드 1&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Filebeat의 &lt;strong&gt;다운로드&lt;/strong&gt; 버튼을 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/filebeat-download-2.png&#34; alt=&#34;Filebeat 다운로드 2&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;버전을 확인하고 운영체제에 맞는 파일을 다운로드합니다.&lt;/p&gt;
+&lt;table&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;운영체제&lt;/th&gt;
+            &lt;th&gt;파일&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Windows&lt;/td&gt;
+            &lt;td&gt;WINDOWS, MSI&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;MacOS&lt;/td&gt;
+            &lt;td&gt;MACOS&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Debian, Ubuntu etc.&lt;/td&gt;
+            &lt;td&gt;DEB&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Red Hat, Fedora, CentOS, OpenSUSE etc.&lt;/td&gt;
+            &lt;td&gt;RPM&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Other Linux&lt;/td&gt;
+            &lt;td&gt;LINUX&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/filebeat-download-3.png&#34; alt=&#34;Filebeat 다운로드 3&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;이전 버전을 설치하고 싶다면 아래에 있는 &lt;strong&gt;past releases&lt;/strong&gt; 링크를 클릭해서 맞는 버전을 다운로드합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/filebeat-download-4.png&#34; alt=&#34;Filebeat 다운로드 3&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;패키지 관리자로 다운로드한 Filebeat를 설치합니다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Windows&lt;/span&gt;
+logstash-버전-아키텍처.exe or filebeat-버전-아키텍처.msi 실행
+   
+&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Debian, Ubuntu&lt;/span&gt;
+sudo apt-get install ./filebeat-버전-아키텍처.deb
+   
+&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Red Hat 8 이상, Fedora 22 이상&lt;/span&gt;
+sudo dnf install ./filebeat-버전-아키텍처.rpm
+   
+&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Red Hat 7 이하, Fedora 21 이하, CentOS&lt;/span&gt;
+sudo yum install ./filebeat-버전-아키텍처.rpm
+   
+&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# OpenSUSE&lt;/span&gt;
+sudo zypper install ./filebeat-버전-아키텍처.rpm
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Filebeat의 Nginx 모듈 활성 합니다. 설정에서 기본 false인 reload.enable을 true로 바꿔줍니다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# /etc/filebeat/filebeat.yml&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#============================= Filebeat modules ===============================&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;filebeat.config.modules&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Glob pattern for configuration loading&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;path&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;${path.config}/modules.d/&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;*.yml&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# 기본값 false. true로 변경하기&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Set to true to enable config reloading&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;reload.enabled&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Period on which files under path should be checked for changes&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#reload.period: 10s&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;sudo filebeat modules &lt;span style=&#34;color:#204a87&#34;&gt;enable&lt;/span&gt; nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Filebeat는 OS를 감지해서 엔진엑스 로그의 위치를 결정합니다. 만약 로그의 위치를 바꿨거나 여러 개의 로그를 읽어오고 싶다면 Nginx 모듈 설정을 변경해서 로그의 위치를 알려줘야 합니다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# /etc/filebeat/modules.d/nginx.yml&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Module: nginx&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Docs: https://www.elastic.co/guide/en/beats/filebeat/7.6/filebeat-module-nginx.html&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   &lt;/span&gt;- &lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;module&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;nginx&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Access logs&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;access&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;enabled&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Set custom paths for the log files. If left empty,&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Filebeat will choose the paths depending on your OS.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;var.paths&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;[경로]&amp;#34;&lt;/span&gt;...&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;]&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Error logs&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;     &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;error&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;enabled&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;true&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Set custom paths for the log files. If left empty,&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Filebeat will choose the paths depending on your OS.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;       &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;var.paths&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;[경로]&amp;#34;&lt;/span&gt;...&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;]&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;8&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;Filebeat에서 읽은 데이터를 Logstash로 보내도록 설정합니다. Elasticsearch output 관련 설정을 주석 처리하고 Logstash output 관련 설정을 주석 해제하면 됩니다.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;background-color:#f8f8f8;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# /etc/filebeat/filebeat.yml&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#================================ Outputs =====================================&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Configure what output to use when sending the data collected by the beat.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#-------------------------- Elasticsearch output ------------------------------&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#output.elasticsearch:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Array of hosts to connect to.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#hosts: [&amp;#34;localhost:9200&amp;#34;]&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Protocol - either `http` (default) or `https`.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#protocol: &amp;#34;https&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Authentication credentials - either API key or username/password.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#api_key: &amp;#34;id:api_key&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#username: &amp;#34;elastic&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#password: &amp;#34;changeme&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#----------------------------- Logstash output --------------------------------&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;&lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;output.logstash&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# The Logstash hosts&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#204a87;font-weight:bold&#34;&gt;hosts&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;:&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt; &lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#4e9a06&#34;&gt;&amp;#34;localhost:5044&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#000;font-weight:bold&#34;&gt;]&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Optional SSL. By default is off.&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# List of root certificates for HTTPS server verifications&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#ssl.certificate_authorities: [&amp;#34;/etc/pki/root/ca.pem&amp;#34;]&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Certificate for SSL client authentication&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#ssl.certificate: &amp;#34;/etc/pki/client/cert.pem&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;   
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;# Client Certificate Key&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;  &lt;/span&gt;&lt;span style=&#34;color:#8f5902;font-style:italic&#34;&gt;#ssl.key: &amp;#34;/etc/pki/client/cert.key&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#f8f8f8;text-decoration:underline&#34;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;logstash-설정&#34;&gt;Logstash 설정&lt;/h2&gt;
+&lt;p&gt;앞서 Logstash를 설치했지만 Logstash의 설정은 어떤 데이터를 처리하느냐에 따라 달라지기 때문에 하지 않았습니다. Nginx의 로그 데이터를 가공해서 Elasticsearch 저장할 수 있도록 Logstash를 설정합니다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;5044포트에 Filebeat로부터 데이터를 입력받아 Nginx에 맞게 데이터를 가공해서 Elasticsearch의 nginx index에 저장하도록 설정합니다.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;# /etc/logstash/conf.d/logstash.conf
+
+input {
+  beats {
+    port =&amp;gt; 5044
+    host =&amp;gt; &amp;quot;0.0.0.0&amp;quot;
+  }
+}
+filter {
+  if [event][module] == &amp;quot;nginx&amp;quot; {
+    if [fileset][name] == &amp;quot;access&amp;quot; {
+      grok {
+        match =&amp;gt; { &amp;quot;message&amp;quot; =&amp;gt; [&amp;quot;%{IPORHOST:[nginx][access][remote_ip]} - %{DATA:[nginx][access][user_name]} \[%{HTTPDATE:[nginx][access][time]}\] \&amp;quot;%{WORD:[nginx][access][method]} %{DATA:[nginx][access][url]} HTTP/%{NUMBER:[nginx][access][http_version]}\&amp;quot; %{NUMBER:[nginx][access][response_code]} %{NUMBER:[nginx][access][body_sent][bytes]}( \&amp;quot;%{DATA:[nginx][access][referrer]}\&amp;quot;)?( \&amp;quot;%{DATA:[nginx][access][agent]}\&amp;quot;)?&amp;quot;,
+          &amp;quot;%{IPORHOST:[nginx][access][remote_ip]} - %{DATA:[nginx][access][user_name]} \\[%{HTTPDATE:[nginx][access][time]}\\] \&amp;quot;-\&amp;quot; %{NUMBER:[nginx][access][response_code]} -&amp;quot; ] }
+        remove_field =&amp;gt; &amp;quot;message&amp;quot;
+      }
+      mutate {
+        add_field =&amp;gt; { &amp;quot;read_timestamp&amp;quot; =&amp;gt; &amp;quot;%{@timestamp}&amp;quot; }
+      }
+      date {
+        match =&amp;gt; [ &amp;quot;[nginx][access][time]&amp;quot;, &amp;quot;dd/MMM/YYYY:H:m:s Z&amp;quot; ]
+        remove_field =&amp;gt; &amp;quot;[nginx][access][time]&amp;quot;
+      }
+      useragent {
+        source =&amp;gt; &amp;quot;[nginx][access][agent]&amp;quot;
+        target =&amp;gt; &amp;quot;[nginx][access][user_agent]&amp;quot;
+        remove_field =&amp;gt; &amp;quot;[nginx][access][agent]&amp;quot;
+      }
+      geoip {
+        source =&amp;gt; &amp;quot;[nginx][access][remote_ip]&amp;quot;
+        target =&amp;gt; &amp;quot;[nginx][access][geoip]&amp;quot;
+      }
+    }
+    else if [fileset][name] == &amp;quot;error&amp;quot; {
+      grok {
+        match =&amp;gt; { &amp;quot;message&amp;quot; =&amp;gt; [&amp;quot;\[%{NGINX_TIME:[nginx][error][timestamp]}\] \[%{LOGLEVEL:[nginx][error][level]}\]( \[client %{IPORHOST:[nginx][error][client]}\])? %{GREEDYDATA:[nginx][error][message]}&amp;quot;,
+          &amp;quot;\[%{APACHE_TIME:[nginx][error][timestamp]}\] \[%{DATA:[nginx][error][module]}:%{LOGLEVEL:[nginx][error][level]}\] \[pid %{NUMBER:[nginx][error][pid]}(:tid %{NUMBER:[nginx][error][tid]})?\]( \[client %{IPORHOST:[nginx][error][client]}\])? %{GREEDYDATA:[nginx][error][message1]}&amp;quot; ] }
+        pattern_definitions =&amp;gt; {
+          &amp;quot;NGINX_TIME&amp;quot; =&amp;gt; &amp;quot;%{DAY} %{MONTH} %{MONTHDAY} %{TIME} %{YEAR}&amp;quot;
+        }
+        remove_field =&amp;gt; &amp;quot;message&amp;quot;
+      }
+      mutate {
+        rename =&amp;gt; { &amp;quot;[nginx][error][message1]&amp;quot; =&amp;gt; &amp;quot;[nginx][error][message]&amp;quot; }
+      }
+      date {
+        match =&amp;gt; [ &amp;quot;[nginx][error][timestamp]&amp;quot;, &amp;quot;EEE MMM dd H:m:s YYYY&amp;quot;, &amp;quot;EEE MMM dd H:m:s.SSSSSS YYYY&amp;quot; ]
+        remove_field =&amp;gt; &amp;quot;[nginx][error][timestamp]&amp;quot;
+      }
+    }
+  }
+}
+output {
+  elasticsearch {
+    hosts =&amp;gt; localhost
+    manage_template =&amp;gt; false
+    index =&amp;gt; &amp;quot;nginx&amp;quot;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;index-초기-설정&#34;&gt;Index 초기 설정&lt;/h2&gt;
+&lt;p&gt;Logstash와 Filebeat를 실행해서 데이터를 저장하기 전에 위치 정보 같은 특별한 정보들은 Elasticsearch에서 제대로 인식할 수 있도록 미리 설정해야합니다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Kibana에 접속해서 Explore my own 링크를 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-start.png&#34; alt=&#34;Kibana main&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Kibana의 왼쪽 메뉴에서 Dev Tools 버튼을 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-dev-tool.png&#34; alt=&#34;Kibana dev tools 1&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;연결된 Elasticsearch에 아래 쿼리를 실행해서 위치 정보에 대한 초기 설정을 진행합니다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;PUT nginx
+{
+  &amp;quot;mappings&amp;quot; : { 
+    &amp;quot;properties&amp;quot;: {
+      &amp;quot;apache2.access.geoip.location&amp;quot; : { 
+        &amp;quot;type&amp;quot; : &amp;quot;geo_point&amp;quot;
+      }
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;logstash-filebeat-실행&#34;&gt;Logstash, Filebeat 실행&lt;/h2&gt;
+&lt;p&gt;​&lt;code&gt;shell sudo systemctl enable --now logstash filebeat ​&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;index-패턴-생성&#34;&gt;Index 패턴 생성&lt;/h2&gt;
+&lt;p&gt;Elasticsearch에서 저장된 데이터를 사용하기 전에 index 식별과 필드의 설정을 위해서 반드시 index 패턴을 생성해야 합니다. 아래는 위 설정으로 저장된 Nginx의 로그 데이터 index의 index 패턴을 생성하는 방법입니다.&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;Kibana의 왼쪽 메뉴에서 Dev Tools 버튼을 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-dev-tool.png&#34; alt=&#34;Kibana dev tools 1&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;연결된 Elasticsearch에 데이터가 정상적으로 저장되고 있는지 확인하는 쿼리를 보냅니다. 하나 이상의 document라도 있다면 데이터의 입력이 시작된 것입니다.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET nginx/_count
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/nginx-1.png&#34; alt=&#34;Kibana dev tools 1&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;다음과 같이 document의 개수가 확인되었다면 index 패턴을 생성하기 위해 왼쪽 메뉴에서 Management 버튼을 클릭합니다. 그 후 Kibana 아래 Index Patterns 버튼을 클릭합니다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create index pattern 버튼을 클릭해서 index 패턴 생성을 시작합니다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Index 이름을 입력하고 Next step을 클릭합니다. 와일드카드 문자도 사용 가능합니다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;@timestamp로 시간 필터 필드를 설정 후 Create index pattern 버튼을 클릭합니다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;document-확인하기&#34;&gt;Document 확인하기&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;생성된 index 패턴을 확인한 뒤 저장된 데이터를 보기 위해서 왼쪽 메뉴에서 Discover를 클릭합니다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;오른쪽 위 시간 필터를 보면 기본으로 최근 15분의 데이터를 불러옵니다. 시간 필터를 조절해서 원하는 시간대의 데이터를 확인할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/nginx-2.png&#34; alt=&#34;Kibana discover 2&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

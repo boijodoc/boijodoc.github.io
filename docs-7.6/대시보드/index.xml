@@ -1,0 +1,151 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>보이조 – 대시보드 구성하기</title>
+    <link>https://elk.pol4.dev/docs-7.6/%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C/</link>
+    <description>Recent content in 대시보드 구성하기 on 보이조</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Tue, 30 Jun 2020 00:00:00 +0000</lastBuildDate>
+    
+	  <atom:link href="https://elk.pol4.dev/docs-7.6/%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+      
+        
+      
+    
+    
+    <item>
+      <title>Docs-7.6: 지도에 위치 정보 표시하기</title>
+      <link>https://elk.pol4.dev/docs-7.6/%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C/%EC%A7%80%EB%8F%84/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://elk.pol4.dev/docs-7.6/%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C/%EC%A7%80%EB%8F%84/</guid>
+      <description>
+        
+        
+        &lt;p&gt;여러 데이터들을 보면 위도와 경도, 아이피 등 위치 정보를 특정할 수 있는 정보들을 포함하고 있습니다. 이러한 위치 정보를 표현하기 가장 좋은 방법 중 하나가 바로 지도에 표시하는 것입니다. 이번에는 지도로 위치 정보가 포함된 데이터를 효과적으로 표현해보겠습니다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;왼쪽 메뉴에서 Maps를 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-map-1.png&#34; alt=&#34;Click maps&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;데이터가 제대로 표시되도록 오른쪽 위에서 시간 필터를 조정 조정합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-map-2.png&#34; alt=&#34;Before time change&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-map-3.png&#34; alt=&#34;After time changed&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Add layer 버튼을 누르면 나오는 오른쪽 메뉴에서 Document를 선택합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-map-4.png&#34; alt=&#34;Add layer 1&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;오른쪽에서 Index pattern을 설정하고 Geospatial field를 확인 후 오른쪽 아래의 Add layer를 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-map-5.png&#34; alt=&#34;Add layer 2&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Layer의 이름을 설정합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-map-6.png&#34; alt=&#34;Add layer 3&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Tooltip을 분석된 위치의 도시 이름으로 설정합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-map-7.png&#34; alt=&#34;Add layer 4&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;정상적인 접속만 표시되도록 필터를 걸 수 도 있습니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-map-8.png&#34; alt=&#34;Add layer 5&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;레이어의 스타일도 변경할 수 있습니다. 레이어의 스타일까지 결정했다면 Save &amp;amp; close를 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-map-9.png&#34; alt=&#34;Add layer 6&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;지도를 저장하기 위해 왼쪽 위의 Save를 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-map-10.png&#34; alt=&#34;Add layer 7&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;이름을 설정한 후 지도를 저장합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-map-11.png&#34; alt=&#34;Add layer 7&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+      </description>
+    </item>
+    
+    <item>
+      <title>Docs-7.6: 그래프 생성하기</title>
+      <link>https://elk.pol4.dev/docs-7.6/%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C/%EA%B7%B8%EB%9E%98%ED%94%84/</link>
+      <pubDate>Tue, 30 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://elk.pol4.dev/docs-7.6/%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C/%EA%B7%B8%EB%9E%98%ED%94%84/</guid>
+      <description>
+        
+        
+        &lt;p&gt;수치화 할 수 있는 데이터나 여러 데이터의 분류가 가능할 때 시각화하기 가장 좋은 방법 중 하나가 그래프입니다. 이번에는 HTTP 응답 코드에 따른 요청 개수를 표현하는 그래프를 만들어보겠습니다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;왼쪽 메뉴에서 Visualize를 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-graph-1.png&#34; alt=&#34;Create graph 1&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Create new visualization을 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-graph-2.png&#34; alt=&#34;Create graph 2&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Horizontal Bar를 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-graph-3.png&#34; alt=&#34;Create graph 3&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;사용할 데이터 소스 즉 index를 선택합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-graph-4.png&#34; alt=&#34;Create graph 4&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Index의 어떤 데이터를 사용할 지 명시하기 위해서 Buckets의 Add를 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-graph-5.png&#34; alt=&#34;Create graph 5&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Bucket(X축)의 속성을 아래와 같이 설정하고 파란 실행 버튼을 클릭합니다.&lt;/p&gt;
+&lt;table&gt;
+    &lt;thead&gt;
+        &lt;th&gt;속성 명&lt;/th&gt;
+        &lt;th&gt;값&lt;/th&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Aggregation&lt;/td&gt;
+            &lt;td&gt;Terms&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Field&lt;/td&gt;
+            &lt;td&gt;apache2.access.response_code.keyword&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Order by&lt;/td&gt;
+            &lt;td&gt;Metric: Count&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Order&lt;/td&gt;
+            &lt;td&gt;Descending&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Size&lt;/td&gt;
+            &lt;td&gt;5&lt;/td&gt;
+        &lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-graph-6.png&#34; alt=&#34;Create graph 6&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;그래프가 정상적으로 표시된다면 왼쪽 위의 Save를 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-graph-7.png&#34; alt=&#34;Create graph 7&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;그래프의 이름을 설정하고 Save를 클릭합니다.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://elk.pol4.dev/images/7.6/kibana-create-graph-8.png&#34; alt=&#34;Create graph 8&#34;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+
+      </description>
+    </item>
+    
+  </channel>
+</rss>

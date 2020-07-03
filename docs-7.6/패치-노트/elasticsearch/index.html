@@ -1,0 +1,1188 @@
+<!doctype html>
+<html lang="ko" class="no-js">
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.73.0" />
+
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+
+
+
+<link rel="shortcut icon" href="/favicons/favicon.ico" >
+<link rel="apple-touch-icon" href="/favicons/apple-touch-icon-180x180.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/favicons/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/favicons/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicons/android-36x36.png" sizes="36x36">
+<link rel="icon" type="image/png" href="/favicons/android-48x48.png" sizes="48x48">
+<link rel="icon" type="image/png" href="/favicons/android-72x72.png" sizes="72x72">
+<link rel="icon" type="image/png" href="/favicons/android-96x96.png" sizes="96x96">
+<link rel="icon" type="image/png" href="/favicons/android-144x144.png" sizes="144x144">
+<link rel="icon" type="image/png" href="/favicons/android-192x192.png" sizes="192x192">
+
+<title>Elasticsearch 패치 노트 | 보이조</title><meta property="og:title" content="Elasticsearch 패치 노트" />
+<meta property="og:description" content="Elasticsearch v7.6 패치 노트
+" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://elk.pol4.dev/docs-7.6/%ED%8C%A8%EC%B9%98-%EB%85%B8%ED%8A%B8/elasticsearch/" />
+<meta property="article:published_time" content="2020-04-19T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-04-19T00:00:00+00:00" /><meta property="og:site_name" content="보이조" />
+<meta itemprop="name" content="Elasticsearch 패치 노트">
+<meta itemprop="description" content="Elasticsearch v7.6 패치 노트
+">
+<meta itemprop="datePublished" content="2020-04-19T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-04-19T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="4629">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Elasticsearch 패치 노트"/>
+<meta name="twitter:description" content="Elasticsearch v7.6 패치 노트
+"/>
+
+
+
+
+
+<link rel="preload" href="/scss/main.min.71b70117095a65941cf7c9ca4f70c850b44d272e14a9b4b33d852dbcb9d4fba5.css" as="style">
+<link href="/scss/main.min.71b70117095a65941cf7c9ca4f70c850b44d272e14a9b4b33d852dbcb9d4fba5.css" rel="stylesheet" integrity="">
+
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+
+  </head>
+  <body class="td-page">
+    <header>
+      
+<nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
+        <a class="navbar-brand" href="/">
+		<span class="navbar-logo"><svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 500 500" style="enable-background:new 0 0 500 500"><g><path style="fill:#fff" d="M116.8525 421.9722c-5.7041.0-10.3442-4.3127-10.3442-9.6129V88.183c0-5.3002 4.6401-9.6117 10.3442-9.6117H320.858c3.0347.0 9.3959.5498 11.7506 2.6302l.3545.3442 58.905 63.2912c2.3101 2.491 2.9202 8.4928 2.9202 11.3184v256.2039c0 5.3002-4.6407 9.6129-10.3436 9.6129H116.8525z"/><g><g><g><path style="fill:#767676" d="M384.4445 423.2066H116.852c-6.3839.0-11.5786-4.8658-11.5786-10.8474V88.1831c0-5.9804 5.1947-10.8461 11.5786-10.8461h204.0062c.377.0 9.2786.0329 12.568 2.9389l.3947.3833 58.9508 63.337c3.2135 3.4652 3.2514 11.7924 3.2514 12.1593v256.2036C396.0231 418.3408 390.8284 423.2066 384.4445 423.2066zM116.5079 411.9189c.0848.0278.1999.0531.3441.0531h267.5925c.1442.0.2581-.0253.3441-.0531V156.1556c-.0076-.9033-.3593-3.7347-.7034-5.0037l-57.6527-61.9416c-1.4651-.3176-4.4533-.6389-5.5742-.6389H116.852c-.143.0-.2594.024-.3441.0531V411.9189zm267.4533-261.149zM327.0321 89.371v.0013V89.371z"/></g></g></g><g><g><path style="fill:#5b7fc0" d="M189.0874 210.1754l.0012-.0012c7.7751.0012 15.0295 4.1862 18.932 10.9234 1.9177 3.3159 2.9305 7.1011 2.9293 10.9378.0 5.8394-2.2733 11.3304-6.4032 15.4604-4.1288 4.1288-9.6186 6.4032-15.458 6.4032s-11.328-2.2733-15.458-6.4032-6.4032-9.6186-6.4056-15.4628c.0012-6.025 2.454-11.4897 6.4116-15.4473C177.5953 212.627 183.0601 210.1742 189.0874 210.1754zM197.0804 232.033c.0012-1.4042-.3687-2.7868-1.063-3.9887-1.4293-2.4684-4.0833-3.9995-6.9299-4.0019-4.4077.0024-7.993 3.5877-7.993 7.993.0 2.1356.832 4.1431 2.3427 5.6539 1.5083 1.5083 3.5159 2.3403 5.6503 2.3415 2.1356.0 4.1443-.8308 5.6539-2.3403S197.0816 234.1722 197.0804 232.033z"/><path style="opacity:.3;fill:#fff" d="M189.0898 210.176c7.7763.0 15.0283 4.1826 18.926 10.9151 1.9201 3.3136 2.9377 7.0988 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8613-12.0547.0024-21.8636-9.8066-21.8612-21.8613.0-6.0285 2.4516-11.4921 6.4116-15.452C177.5977 212.6276 183.0612 210.176 189.0898 210.176zM197.0839 232.0372c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.1861 236.239 197.0839 234.2399 197.0839 232.0372z"/><g><defs><path id="SVGID_1_" d="M194.7376 237.6875c-1.4461 1.4461-3.4452 2.3439-5.6479 2.3439-4.4077-.0024-7.9918-3.5865-7.9942-7.9942.0024-4.4125 3.5937-7.999 7.9942-7.9942 2.8443.0 5.497 1.5323 6.924 3.9983.6991 1.2067 1.0702 2.5881 1.0702 3.9959C197.0839 234.2399 196.1861 236.239 194.7376 237.6875z"/></defs><clipPath id="SVGID_2_"><use xlink:href="#SVGID_1_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_2_);fill:#fff" d="M190.0704 225.0237c-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0011 1.9546.7088 3.7452 1.8782 5.1354-1.7447-1.4674-2.8575-3.663-2.8588-6.116.0024-4.4125 3.5936-7.999 7.9942-7.9942 2.3802-1e-4 4.616 1.0833 6.1218 2.8788C193.7885 225.7247 191.9774 225.0237 190.0704 225.0237z"/><path style="opacity:.13;clip-path:url(#SVGID_2_);fill:#020202" d="M190.0704 225.0237c-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0011 1.9546.7088 3.7452 1.8782 5.1354-1.7447-1.4674-2.8575-3.663-2.8588-6.116.0024-4.4125 3.5936-7.999 7.9942-7.9942 2.3802-1e-4 4.616 1.0833 6.1218 2.8788C193.7885 225.7247 191.9774 225.0237 190.0704 225.0237z"/></g><g><defs><path id="SVGID_3_" d="M189.0898 210.176c7.7763.0 15.0283 4.1826 18.926 10.9151 1.9201 3.3136 2.9377 7.0988 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8613-12.0547.0024-21.8636-9.8066-21.8612-21.8613.0-6.0285 2.4516-11.4921 6.4116-15.452C177.5977 212.6276 183.0612 210.176 189.0898 210.176zM197.0839 232.0372c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.1861 236.239 197.0839 234.2399 197.0839 232.0372z"/></defs><clipPath id="SVGID_4_"><use xlink:href="#SVGID_3_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_4_);fill:#5b7fc0" d="M172.6595 215.6045c-3.96 3.96-6.4116 9.4235-6.4116 15.452-.0024 12.0547 9.8066 21.8636 21.8613 21.8612 12.0547.0024 21.8636-9.797 21.8613-21.8612.0024-3.8475-1.0151-7.6326-2.9353-10.9462-3.8977-6.7324-11.1497-10.9151-18.926-10.9151C182.0806 209.1953 176.6171 211.647 172.6595 215.6045z"/></g></g><rect x="198.8952" y="225.1043" style="fill:#5b7fc0" width="122.6266" height="13.8671"/></g><g><path style="fill:#d95140" d="M189.0874 155.7611l.0012-.0012c7.7751.0012 15.0295 4.1862 18.932 10.9234 1.9177 3.3159 2.9305 7.1011 2.9293 10.9378.0 5.8394-2.2733 11.3304-6.4032 15.4604-4.1288 4.1288-9.6186 6.4032-15.458 6.4032s-11.328-2.2733-15.458-6.4032-6.4032-9.6186-6.4056-15.4628c.0012-6.0249 2.454-11.4897 6.4116-15.4473C177.5953 158.2128 183.0601 155.7599 189.0874 155.7611zM197.0804 177.6188c.0012-1.4042-.3687-2.7868-1.063-3.9887-1.4293-2.4684-4.0833-3.9995-6.9299-4.0019-4.4077.0024-7.993 3.5877-7.993 7.993.0 2.1356.832 4.1431 2.3427 5.6539 1.5083 1.5083 3.5159 2.3403 5.6503 2.3415 2.1356.0 4.1443-.8308 5.6539-2.3403C196.2508 181.7667 197.0816 179.758 197.0804 177.6188z"/><path style="opacity:.3;fill:#fff" d="M189.0898 155.7617c7.7763.0 15.0283 4.1826 18.926 10.9151 1.9201 3.3135 2.9377 7.0987 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8613-12.0547.0024-21.8636-9.8066-21.8612-21.8613.0-6.0285 2.4516-11.4921 6.4116-15.452C177.5977 158.2134 183.0612 155.7617 189.0898 155.7617zM197.0839 177.623c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.1861 181.8248 197.0839 179.8256 197.0839 177.623z"/><g><defs><path id="SVGID_5_" d="M194.7376 183.2733c-1.4461 1.4461-3.4452 2.3439-5.6479 2.3439-4.4077-.0024-7.9918-3.5865-7.9942-7.9942.0024-4.4125 3.5937-7.9989 7.9942-7.9942 2.8443.0 5.497 1.5323 6.924 3.9983.6991 1.2067 1.0702 2.5881 1.0702 3.9959C197.0839 179.8256 196.1861 181.8248 194.7376 183.2733z"/></defs><clipPath id="SVGID_6_"><use xlink:href="#SVGID_5_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_6_);fill:#fff" d="M190.0704 170.6095c-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0011 1.9546.7088 3.7452 1.8782 5.1354-1.7447-1.4674-2.8575-3.663-2.8588-6.116.0024-4.4125 3.5936-7.999 7.9942-7.9942 2.3802-1e-4 4.616 1.0833 6.1218 2.8788C193.7885 171.3104 191.9774 170.6095 190.0704 170.6095z"/><path style="opacity:.13;clip-path:url(#SVGID_6_);fill:#020202" d="M190.0704 170.6095c-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0011 1.9546.7088 3.7452 1.8782 5.1354-1.7447-1.4674-2.8575-3.663-2.8588-6.116.0024-4.4125 3.5936-7.999 7.9942-7.9942 2.3802-1e-4 4.616 1.0833 6.1218 2.8788C193.7885 171.3104 191.9774 170.6095 190.0704 170.6095z"/></g><g><defs><path id="SVGID_7_" d="M189.0898 155.7617c7.7763.0 15.0283 4.1826 18.926 10.9151 1.9201 3.3135 2.9377 7.0987 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8613-12.0547.0024-21.8636-9.8066-21.8612-21.8613.0-6.0285 2.4516-11.4921 6.4116-15.452C177.5977 158.2134 183.0612 155.7617 189.0898 155.7617zM197.0839 177.623c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.1861 181.8248 197.0839 179.8256 197.0839 177.623z"/></defs><clipPath id="SVGID_8_"><use xlink:href="#SVGID_7_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_8_);fill:#d95140" d="M172.6595 161.1903c-3.96 3.96-6.4116 9.4235-6.4116 15.452-.0024 12.0547 9.8066 21.8636 21.8613 21.8613 12.0547.0024 21.8636-9.797 21.8613-21.8613.0024-3.8474-1.0151-7.6326-2.9353-10.9462-3.8977-6.7324-11.1497-10.9151-18.926-10.9151C182.0806 154.7811 176.6171 157.2327 172.6595 161.1903z"/></g><rect x="198.8952" y="170.69" style="fill:#d95140" width="122.6266" height="13.8671"/></g><g><g><path style="fill:#56a55c" d="M189.5379 264.6147l.0012-.0012c7.7751.0012 15.0294 4.1862 18.932 10.9235 1.9177 3.3159 2.9305 7.1011 2.9293 10.9378.0 5.8394-2.2733 11.3304-6.4032 15.4604-4.1288 4.1288-9.6186 6.4032-15.458 6.4032-5.8394.0-11.3281-2.2733-15.458-6.4032-4.13-4.13-6.4032-9.6186-6.4056-15.4628.0012-6.0249 2.454-11.4897 6.4116-15.4472C178.0458 267.0663 183.5105 264.6135 189.5379 264.6147zM197.5309 286.4723c.0012-1.4042-.3687-2.7868-1.063-3.9887-1.4293-2.4684-4.0833-3.9995-6.9299-4.0019-4.4077.0024-7.993 3.5877-7.993 7.993.0 2.1356.832 4.1431 2.3427 5.6538 1.5083 1.5083 3.5159 2.3403 5.6503 2.3415 2.1356.0 4.1443-.8308 5.6539-2.3403C196.7013 290.6202 197.5321 288.6115 197.5309 286.4723z"/><path style="opacity:.3;fill:#fff" d="M189.5403 264.6153c7.7763.0 15.0283 4.1826 18.926 10.9151 1.9201 3.3135 2.9377 7.0987 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8613-12.0547.0024-21.8636-9.8065-21.8612-21.8613.0-6.0285 2.4516-11.492 6.4116-15.452C178.0482 267.0669 183.5117 264.6153 189.5403 264.6153zM197.5344 286.4765c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9941.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.6366 290.6783 197.5344 288.6792 197.5344 286.4765z"/><g><defs><path id="SVGID_9_" d="M195.1881 292.1268c-1.4461 1.4461-3.4452 2.3439-5.6479 2.3439-4.4077-.0024-7.9918-3.5865-7.9942-7.9942.0024-4.4125 3.5937-7.9989 7.9942-7.9941 2.8443.0 5.497 1.5323 6.924 3.9983.6991 1.2067 1.0702 2.5881 1.0702 3.9959C197.5344 288.6792 196.6366 290.6783 195.1881 292.1268z"/></defs><clipPath id="SVGID_10_"><use xlink:href="#SVGID_9_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_10_);fill:#fff" d="M190.5209 279.463c-4.4005-.0048-7.9918 3.5817-7.9942 7.9941.0011 1.9547.7088 3.7452 1.8782 5.1354-1.7446-1.4674-2.8575-3.6631-2.8588-6.1161.0024-4.4125 3.5936-7.999 7.9942-7.9941 2.3802-1e-4 4.616 1.0833 6.1218 2.8788C194.239 280.164 192.4279 279.463 190.5209 279.463z"/><path style="opacity:.13;clip-path:url(#SVGID_10_);fill:#020202" d="M190.5209 279.463c-4.4005-.0048-7.9918 3.5817-7.9942 7.9941.0011 1.9547.7088 3.7452 1.8782 5.1354-1.7446-1.4674-2.8575-3.6631-2.8588-6.1161.0024-4.4125 3.5936-7.999 7.9942-7.9941 2.3802-1e-4 4.616 1.0833 6.1218 2.8788C194.239 280.164 192.4279 279.463 190.5209 279.463z"/></g><g><defs><path id="SVGID_11_" d="M189.5403 264.6153c7.7763.0 15.0283 4.1826 18.926 10.9151 1.9201 3.3135 2.9377 7.0987 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8613-12.0547.0024-21.8636-9.8065-21.8612-21.8613.0-6.0285 2.4516-11.492 6.4116-15.452C178.0482 267.0669 183.5117 264.6153 189.5403 264.6153zM197.5344 286.4765c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9941.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.6366 290.6783 197.5344 288.6792 197.5344 286.4765z"/></defs><clipPath id="SVGID_12_"><use xlink:href="#SVGID_11_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_12_);fill:#56a55c" d="M173.11 270.0439c-3.96 3.96-6.4116 9.4235-6.4116 15.452-.0024 12.0547 9.8066 21.8636 21.8613 21.8613 12.0547.0024 21.8636-9.797 21.8613-21.8613.0024-3.8474-1.0151-7.6326-2.9353-10.9462-3.8977-6.7325-11.1497-10.9151-18.926-10.9151C182.5311 263.6346 177.0676 266.0863 173.11 270.0439z"/></g></g><rect x="199.3456" y="279.5436" style="fill:#56a55c" width="122.6266" height="13.8671"/></g><g><g><path style="fill:#f1bc42" d="M189.0874 318.7208l.0012-.0012c7.7751.0012 15.0295 4.1862 18.932 10.9234 1.9177 3.3159 2.9305 7.1011 2.9293 10.9378.0 5.8394-2.2733 11.3305-6.4032 15.4604-4.1288 4.1288-9.6186 6.4032-15.458 6.4032s-11.328-2.2733-15.458-6.4032-6.4032-9.6186-6.4056-15.4628c.0012-6.025 2.454-11.4897 6.4116-15.4472C177.5953 321.1724 183.0601 318.7196 189.0874 318.7208zM197.0804 340.5784c.0012-1.4042-.3687-2.7868-1.063-3.9887-1.4293-2.4684-4.0833-3.9995-6.9299-4.0019-4.4077.0024-7.993 3.5877-7.993 7.993.0 2.1356.832 4.1431 2.3427 5.6539 1.5083 1.5083 3.5159 2.3403 5.6503 2.3415 2.1356.0 4.1443-.8308 5.6539-2.3403S197.0816 342.7176 197.0804 340.5784z"/><path style="opacity:.3;fill:#fff" d="M189.0898 318.7214c7.7763.0 15.0283 4.1826 18.926 10.915 1.9201 3.3136 2.9377 7.0988 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8612-12.0547.0024-21.8636-9.8065-21.8612-21.8612.0-6.0285 2.4516-11.4921 6.4116-15.452C177.5977 321.173 183.0612 318.7214 189.0898 318.7214zM197.0839 340.5826c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.1861 344.7844 197.0839 342.7853 197.0839 340.5826z"/><g><defs><path id="SVGID_13_" d="M194.7376 346.2329c-1.4461 1.4461-3.4452 2.3439-5.6479 2.3439-4.4077-.0024-7.9918-3.5865-7.9942-7.9942.0024-4.4125 3.5937-7.999 7.9942-7.9942 2.8443.0 5.497 1.5323 6.924 3.9983.6991 1.2067 1.0702 2.5881 1.0702 3.9959C197.0839 342.7853 196.1861 344.7844 194.7376 346.2329z"/></defs><clipPath id="SVGID_14_"><use xlink:href="#SVGID_13_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_14_);fill:#fff" d="M190.0704 333.5691c-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0011 1.9547.7088 3.7452 1.8782 5.1354-1.7447-1.4674-2.8575-3.6631-2.8588-6.1161.0024-4.4125 3.5936-7.999 7.9942-7.9942 2.3802-1e-4 4.616 1.0834 6.1218 2.8788C193.7885 334.2701 191.9774 333.5691 190.0704 333.5691z"/><path style="opacity:.13;clip-path:url(#SVGID_14_);fill:#020202" d="M190.0704 333.5691c-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0011 1.9547.7088 3.7452 1.8782 5.1354-1.7447-1.4674-2.8575-3.6631-2.8588-6.1161.0024-4.4125 3.5936-7.999 7.9942-7.9942 2.3802-1e-4 4.616 1.0834 6.1218 2.8788C193.7885 334.2701 191.9774 333.5691 190.0704 333.5691z"/></g><g><defs><path id="SVGID_15_" d="M189.0898 318.7214c7.7763.0 15.0283 4.1826 18.926 10.915 1.9201 3.3136 2.9377 7.0988 2.9353 10.9462.0024 12.0643-9.8065 21.8636-21.8613 21.8612-12.0547.0024-21.8636-9.8065-21.8612-21.8612.0-6.0285 2.4516-11.4921 6.4116-15.452C177.5977 321.173 183.0612 318.7214 189.0898 318.7214zM197.0839 340.5826c0-1.4078-.3711-2.7892-1.0702-3.9959-1.4269-2.466-4.0797-3.9983-6.924-3.9983-4.4005-.0048-7.9918 3.5817-7.9942 7.9942.0024 4.4077 3.5865 7.9918 7.9942 7.9942 2.2027.0 4.2018-.8978 5.6479-2.3439C196.1861 344.7844 197.0839 342.7853 197.0839 340.5826z"/></defs><clipPath id="SVGID_16_"><use xlink:href="#SVGID_15_" style="overflow:visible"/></clipPath><path style="clip-path:url(#SVGID_16_);fill:#f1bc42" d="M172.6595 324.15c-3.96 3.96-6.4116 9.4235-6.4116 15.452-.0024 12.0547 9.8066 21.8636 21.8613 21.8612 12.0547.0024 21.8636-9.797 21.8613-21.8612.0024-3.8474-1.0151-7.6327-2.9353-10.9462-3.8977-6.7324-11.1497-10.9151-18.926-10.9151C182.0806 317.7407 176.6171 320.1924 172.6595 324.15z"/></g></g><rect x="198.8952" y="333.6497" style="fill:#f1bc42" width="122.6266" height="13.8671"/></g></g></svg></span><span class="text-uppercase font-weight-bold">보이조</span>
+	</a>
+	<div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+		<ul class="navbar-nav mt-2 mt-lg-0">
+			
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				<a class="nav-link" href="/about/" ><span>소개</span></a>
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				
+				
+				<a class="nav-link" href="/docs/" ><span>문서</span></a>
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				<a class="nav-link" href="https://github.com/boijodoc/wiki/issues" target="_blank" ><span>Q&amp;A</span></a>
+			</li>
+			
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+				
+				
+				
+				
+				<a class="nav-link" href="https://github.com/boijodoc/" target="_blank" ><span>GitHub</span></a>
+			</li>
+			
+			
+			<li class="nav-item dropdown d-none d-lg-block">
+				<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	Releases
+</a>
+<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+	
+	<a class="dropdown-item" href="https://elk.pol4.dev/docs-7.6/">lastest(7.6)</a>
+	
+</div>
+
+			</li>
+			
+			
+		</ul>
+	</div>
+	<div class="navbar-nav d-none d-lg-block">
+</div>
+</nav>
+
+    </header>
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+            
+
+
+
+
+<div id="td-sidebar-menu" class="td-sidebar__inner">
+  
+  <form class="td-sidebar__search d-flex align-items-center">
+    
+
+    <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    </button>
+  </form>
+  
+  <nav class="collapse td-sidebar-nav pt-2 pl-4" id="td-section-nav">
+    
+    
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/docs-7.6/" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">문서</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="docs-76">
+      
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/docs-7.6/%ED%8C%A8%EC%B9%98-%EB%85%B8%ED%8A%B8/" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">패치 노트</a>
+  </li>
+  <ul>
+    <li class="collapse show" id="docs-76ed8ca8ecb998-eb85b8ed8ab8">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page  active" id="m-docs-76ed8ca8ecb998-eb85b8ed8ab8elasticsearch" href="/docs-7.6/%ED%8C%A8%EC%B9%98-%EB%85%B8%ED%8A%B8/elasticsearch/">Elasticsearch</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docs-76ed8ca8ecb998-eb85b8ed8ab8logstash" href="/docs-7.6/%ED%8C%A8%EC%B9%98-%EB%85%B8%ED%8A%B8/logstash/">Logstash</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docs-76ed8ca8ecb998-eb85b8ed8ab8kibana" href="/docs-7.6/%ED%8C%A8%EC%B9%98-%EB%85%B8%ED%8A%B8/kibana/">Kibana</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docs-76ed8ca8ecb998-eb85b8ed8ab8filebeat" href="/docs-7.6/%ED%8C%A8%EC%B9%98-%EB%85%B8%ED%8A%B8/filebeat/">Filebeat</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/docs-7.6/elk-%EC%8A%A4%ED%83%9D-%EA%B5%AC%EC%B6%95/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">ELK 스택 구축</a>
+  </li>
+  <ul>
+    <li class="collapse " id="docs-76elk-ec8aa4ed839d-eab5acecb695">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docs-76elk-ec8aa4ed839d-eab5acecb695install-elasticsearch" href="/docs-7.6/elk-%EC%8A%A4%ED%83%9D-%EA%B5%AC%EC%B6%95/install-elasticsearch/">Elasticsearch 설치</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docs-76elk-ec8aa4ed839d-eab5acecb695install-logstash" href="/docs-7.6/elk-%EC%8A%A4%ED%83%9D-%EA%B5%AC%EC%B6%95/install-logstash/">Logstash 설치</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docs-76elk-ec8aa4ed839d-eab5acecb695install-kibana" href="/docs-7.6/elk-%EC%8A%A4%ED%83%9D-%EA%B5%AC%EC%B6%95/install-kibana/">Kibana 설치</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/docs-7.6/%EC%9B%B9-%EC%84%9C%EB%B2%84/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">웹 서버</a>
+  </li>
+  <ul>
+    <li class="collapse " id="docs-76ec9bb9-ec849cebb284">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docs-76ec9bb9-ec849cebb284apache" href="/docs-7.6/%EC%9B%B9-%EC%84%9C%EB%B2%84/apache/">아파치</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docs-76ec9bb9-ec849cebb284nginx" href="/docs-7.6/%EC%9B%B9-%EC%84%9C%EB%B2%84/nginx/">엔진엑스</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+      
+      
+
+
+
+
+
+
+<ul class="td-sidebar-nav__section pr-md-3">
+  <li class="td-sidebar-nav__section-title">
+    <a  href="/docs-7.6/%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C/" class="align-left pl-0 pr-2 collapsed td-sidebar-link td-sidebar-link__section">대시보드 구성</a>
+  </li>
+  <ul>
+    <li class="collapse " id="docs-76eb8c80ec8b9cebb3b4eb939c">
+      
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docs-76eb8c80ec8b9cebb3b4eb939ceca780eb8f84" href="/docs-7.6/%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C/%EC%A7%80%EB%8F%84/">지도</a>
+      
+      
+      
+      
+      
+      <a class="td-sidebar-link td-sidebar-link__page " id="m-docs-76eb8c80ec8b9cebb3b4eb939ceab7b8eb9e98ed9484" href="/docs-7.6/%EB%8C%80%EC%8B%9C%EB%B3%B4%EB%93%9C/%EA%B7%B8%EB%9E%98%ED%94%84/">그래프 생성</a>
+      
+      
+    </li>
+  </ul>
+</ul>
+
+      
+      
+    </li>
+  </ul>
+</ul>
+
+  </nav>
+</div>
+
+
+
+
+          </div>
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            
+  
+  
+  
+  
+  <div class="pageinfo pageinfo-primary">
+    
+  </div>
+
+
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	<ol class="breadcrumb spb-1">
+		
+
+
+
+
+
+
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://elk.pol4.dev/docs-7.6/">문서</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item" >
+	<a href="https://elk.pol4.dev/docs-7.6/%ED%8C%A8%EC%B9%98-%EB%85%B8%ED%8A%B8/">패치 노트</a>
+</li>
+
+
+
+
+<li class="breadcrumb-item active" aria-current="page">
+	<a href="https://elk.pol4.dev/docs-7.6/%ED%8C%A8%EC%B9%98-%EB%85%B8%ED%8A%B8/elasticsearch/">Elasticsearch</a>
+</li>
+
+	</ol>
+</nav	>
+
+            
+<div class="td-content">
+	<h1>Elasticsearch 패치 노트</h1>
+    <div class="lead">Elasticsearch v7.6 패치 노트</div>
+	       
+	<h1 id="알려진-문제">알려진 문제</h1>
+<ul>
+<li>
+<p>Index를 축소하고 document를 삭제하거나 변경하면 index가 손상될 수 있습니다. Index의 손상을 방지하려면 index들을 축소하지 않는 것을 권장합니다. 축소한 index가 읽기 전용이라면 축소 후 강제 병합하는 것을 권장합니다. 이 문제는 Elasticsearch 7.7 버전 이상에서 해결됐습니다. 자세한 내용은 <a href="https://issues.apache.org/jira/browse/LUCENE-9300">여기</a>에서 확인할 수 있습니다.</p>
+</li>
+<li>
+<p>6.x 버전에서 만들어진 index들 중 data와 date_nanos 포맷을 사용하는 필드들은 java.time 패턴들과 호환되지 않습니다. 이 문제로 인해 분석 오류와 부정확한 날짜 계산이나 정확하지 않은 검색 결과가 발생할 수 있습니다. 이 문제는 7.7 버전 이상에서 해결됐습니다. 자세한 내용은 <a href="https://github.com/elastic/elasticsearch/pull/52555">여기</a>에서 확인할 수 있습니다.</p>
+</li>
+<li>
+<p><a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules-slowlog.html">느린 로그</a>는 시간이 지남에 따라 Log4j 로거에 메모리 누수가 발생하게 할 수 있습니다. 새로운 index가 생성되었을 때 새로운 Log4j 로거가 연결됩니다. Index를 삭제하더라도 Log4j가 로거들에 대한 내부 참조를 유지해서 메모리 누수를 발생시킵니다 (issue: <a href="https://github.com/elastic/elasticsearch/issues/56171">#56171</a>). 이 문제는 6.8.10과 7.7.1 버전에서 해결됐습니다.</p>
+</li>
+<li>
+<p>주 기준 날짜 패턴이 Y와 함께 제대로 작동하지 않습니다. Y를 w와 함께 사용하면 요청에 실패해서 예외가 로그에 기록됩니다 (issue: <a href="https://github.com/elastic/elasticsearch/issues/57128">#57128</a>). y와 w를 같이 사용하면 부정확한 날짜 계산이 발생합니다. jvm.options 파일에 다음 행을 추가해서 이 문제를 해결할 수 있습니다.</p>
+<pre><code>9-:-Djava.locale.providers=SPI,COMPAT
+</code></pre><p>이 문제는 Elasticsearch 7.7.0 버전 이상해서 해결됐습니다 (issue: <a href="https://github.com/elastic/elasticsearch/issues/50916">#50916</a>).</p>
+</li>
+</ul>
+<h1 id="주요-변경사항">주요 변경사항</h1>
+<p><strong>매핑</strong></p>
+<ul>
+<li>Cluster 설정에 _id 필드의 필드 데이터 로딩 비활성화 설정 추가 <a href="https://github.com/elastic/elasticsearch/pull/49166">#49166</a> (issues: <a href="https://github.com/elastic/elasticsearch/issues/26472">#26472</a>, <a href="https://github.com/elastic/elasticsearch/issues/43599">#43599</a>)</li>
+</ul>
+<h1 id="자바-주요-변경사항">자바 주요 변경사항</h1>
+<p><strong>보안</strong></p>
+<ul>
+<li>사용자 정의 영역에서 클라이언트와 역할 매핑(RoleMapping) 지원(issues: <a href="https://github.com/elastic/elasticsearch/issues/48369"># 48369</a> )</li>
+</ul>
+<h1 id="지원-중단">지원 중단</h1>
+<p><strong>분석</strong></p>
+<ul>
+<li>낙타 사례 nGram 및 edgeNGram 토큰 화기 사용 중단 및 제거 <a href="https://github.com/elastic/elasticsearch/pull/50862"># 50862</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50561"># 50561</a> )</li>
+</ul>
+<p><strong>권한 부여</strong></p>
+<ul>
+<li>kibana_user 및 kibana_dashboard_only_user 역할 지원 중단 <a href="https://github.com/elastic/elasticsearch/pull/46456"># 46456</a></li>
+</ul>
+<p><strong>분산</strong></p>
+<ul>
+<li>동기화 된 플러시 <a href="https://github.com/elastic/elasticsearch/pull/50835"># 50835</a> 사용 중단 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50776"># 50776</a> )</li>
+<li>소프트 삭제없이 인덱스 사용 중단 <a href="https://github.com/elastic/elasticsearch/pull/50502"># 50502</a></li>
+</ul>
+<p><strong>특징 / 지표 API</strong></p>
+<ul>
+<li>인덱스 템플릿에 여러 개의 매핑이있는 경우 경고를 방출합니다. <a href="https://github.com/elastic/elasticsearch/pull/50982"># 50982</a></li>
+<li>더 이상 사용되지 않는 <em>템플릿</em> 필드를 사용할 때 경고가 발생하는지 확인하십시오 . <a href="https://github.com/elastic/elasticsearch/pull/50831"># 50831</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49460"># 49460</a> )</li>
+</ul>
+<p><strong>인프라 / 코어</strong></p>
+<ul>
+<li>/ _cat / nodes <a href="https://github.com/elastic/elasticsearch/pull/50499"># 50499</a> 의 <em>로컬</em> 매개 변수를 더 이상 사용하지 <a href="https://github.com/elastic/elasticsearch/pull/50499">마십시오</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50088"># 50088</a> )</li>
+</ul>
+<p><strong>재색 인</strong></p>
+<ul>
+<li><a href="https://github.com/elastic/elasticsearch/pull/49458">재색 인 # 49458</a> 에서 정렬 사용 중단 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47567"># 47567</a> )</li>
+</ul>
+<p><strong>검색</strong></p>
+<ul>
+<li>벡터 스크립트 함수의 서명을 업데이트하십시오. <a href="https://github.com/elastic/elasticsearch/pull/48604"># 48604</a></li>
+<li>sparse_vector 필드 유형을 사용하지 않습니다. <a href="https://github.com/elastic/elasticsearch/pull/48315"># 48315</a></li>
+<li>검색 요청 <a href="https://github.com/elastic/elasticsearch/pull/48351"># 48351</a> 에서 할당 인식에 대한 지원 중단 경고 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/43453"># 43453</a> )</li>
+</ul>
+<h1 id="새로운-기능">새로운 기능</h1>
+<p><strong>집계</strong></p>
+<ul>
+<li>백분위 수 집계를 지원하는 새로운 히스토그램 필드 매퍼. <a href="https://github.com/elastic/elasticsearch/pull/48580"># 48580</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48578"># 48578</a> )</li>
+<li>문자열 용어에 대한 통계 집계 구현 <a href="https://github.com/elastic/elasticsearch/pull/47468"># 47468</a></li>
+</ul>
+<p><strong>분석</strong></p>
+<ul>
+<li>구현 루씬 EstonianAnalyzer, 형태소 분석기의 <a href="https://github.com/elastic/elasticsearch/pull/49149"># 49149</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48895"># 48895</a> )</li>
+</ul>
+<p><strong>입증</strong></p>
+<ul>
+<li>비밀번호로 보호 된 키 저장소 (기능 지점) <a href="https://github.com/elastic/elasticsearch/pull/49210"># 49210</a></li>
+</ul>
+<p><strong>특징 / ILM + SLM</strong></p>
+<ul>
+<li>SLM 정책 실행 <a href="https://github.com/elastic/elasticsearch/pull/50454"># 50454</a> 를 기다리는 ILM 조치 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/45067"># 45067</a> )</li>
+<li>ILM histore 상점 색인 <a href="https://github.com/elastic/elasticsearch/pull/50287"># 50287</a> 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49180"># 49180</a> )</li>
+</ul>
+<p><strong>특징 / 섭취</strong></p>
+<ul>
+<li>CSV 프로세서 <a href="https://github.com/elastic/elasticsearch/pull/49509"># 49509</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49113"># 49113</a> )</li>
+</ul>
+<p><strong>기계 학습</strong></p>
+<ul>
+<li>분류 평가 <a href="https://github.com/elastic/elasticsearch/pull/49671"># 49671의</a> 구현 <code>precision</code>및 <code>recall</code>메트릭 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48759"># 48759</a> )<a href="https://github.com/elastic/elasticsearch/pull/49671"></a><a href="https://github.com/elastic/elasticsearch/issues/48759"></a></li>
+<li>데이터 프레임 분석 API 설명 <a href="https://github.com/elastic/elasticsearch/pull/49455"># 49455</a></li>
+<li>기계 학습 모델 추론 수집 프로세서 <a href="https://github.com/elastic/elasticsearch/pull/49052"># 49052</a></li>
+<li>멀티 클래스 분류 <a href="https://github.com/elastic/elasticsearch/pull/47772"># 47772에</a> 대한 정확도 메트릭 구현 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48759"># 48759</a> )</li>
+<li>분류 및 회귀 결과에 기능 중요도 값 추가 (Tree SHapley Additive ExPlanation 또는 SHAP 사용) <a href="https://github.com/elastic/ml-cpp/pull/857"># 857</a></li>
+</ul>
+<p><strong>매핑</strong></p>
+<ul>
+<li>필드 별 메타 데이터를 추가하십시오. <a href="https://github.com/elastic/elasticsearch/pull/49419"># 49419</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/33267"># 33267</a> )</li>
+</ul>
+<p><strong>검색</strong></p>
+<ul>
+<li>퍼지 간격 소스 <a href="https://github.com/elastic/elasticsearch/pull/49762"># 49762</a> 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49595"># 49595</a> )</li>
+<li>로컬로 검색 요청의 진행 상황을 추적하기 위해 리스너 추가 <a href="https://github.com/elastic/elasticsearch/pull/49471"># 49471</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49091"># 49091</a> )</li>
+</ul>
+<h1 id="향상">향상</h1>
+<p><strong>집계</strong></p>
+<ul>
+<li>재사용 가능한 HistogramValue 객체 <a href="https://github.com/elastic/elasticsearch/pull/49799"># 49799</a> 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49683"># 49683</a> )</li>
+<li>인덱스 정렬 <a href="https://github.com/elastic/elasticsearch/pull/48399"># 48399</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48130"># 48130</a> )를 기반으로 복합 집계 최적화</li>
+</ul>
+<p><strong>배당</strong></p>
+<ul>
+<li>할당 필터링 규칙에 따라 자동 확장 인덱스 <a href="https://github.com/elastic/elasticsearch/pull/48974"># 48974</a></li>
+<li>손상된 노드 <a href="https://github.com/elastic/elasticsearch/pull/48265"># 48265</a> 에서 noop 복사에 대한 진행중인 복구를 취소하지 마십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47974"># 47974</a> )</li>
+<li>DiskThresholdMonitor <a href="https://github.com/elastic/elasticsearch/pull/48115"># 48115</a> 에서 자동 로깅 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48038"># 48038</a> )</li>
+<li>INITIALIZING / RELOCATING 샤드 <a href="https://github.com/elastic/elasticsearch/pull/47817"># 47817에</a> 대한 빠른 액세스 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/46941"># 46941</a> , <a href="https://github.com/elastic/elasticsearch/issues/48579"># 48579</a> )</li>
+</ul>
+<p><strong>분석</strong></p>
+<ul>
+<li>분석기가 <a href="https://github.com/elastic/elasticsearch/pull/50908"># 50908에</a> 빌드 될 때 지원 중단을 확인하십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/42349"># 42349</a> )</li>
+<li>멀티플렉서가 필터 체인 분석 모드 <a href="https://github.com/elastic/elasticsearch/pull/50662"># 50662를</a> 상속하게 <a href="https://github.com/elastic/elasticsearch/pull/50662">하십시오</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50554"># 50554</a> )</li>
+<li>ngram 토크 나이저 <a href="https://github.com/elastic/elasticsearch/pull/49250"># 49250의</a> token_chars에서 사용자 지정 문자 허용 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/25894"># 25894</a> )</li>
+</ul>
+<p><strong>입증</strong></p>
+<ul>
+<li>인증 <a href="https://github.com/elastic/elasticsearch/pull/49575"># 49575에</a> 디버그 / 추적 로깅 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49473"># 49473</a> )</li>
+</ul>
+<p><strong>권한 부여</strong></p>
+<ul>
+<li>DLS BitSet Cache <a href="https://github.com/elastic/elasticsearch/pull/50535"># 50535</a> 에서 크기 증가 및 TTL <a href="https://github.com/elastic/elasticsearch/pull/50535">감소</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/43669"># 43669</a> , <a href="https://github.com/elastic/elasticsearch/issues/49260"># 49260</a> )</li>
+<li><em>monitor_snapshot</em> 클러스터 권한 <a href="https://github.com/elastic/elasticsearch/pull/50489"># 50489</a> 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50210"># 50210</a> )</li>
+<li>코드 검색 <a href="https://github.com/elastic/elasticsearch/pull/50068"># 50068에</a> 대한 예약 된 역할 제거 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49842"># 49842</a> )</li>
+<li>[코드] code_admin / code_user 역할 제거 <a href="https://github.com/elastic/elasticsearch/pull/48164"># 48164</a></li>
+<li>역할 쿼리와 지연 문서 수를 해결 <a href="https://github.com/elastic/elasticsearch/pull/48036"># 48036</a></li>
+</ul>
+<p><strong>CCR</strong></p>
+<ul>
+<li>
+<ul>
+<li>인덱스 <a href="https://github.com/elastic/elasticsearch/pull/48915"># 48915를</a> 일시 중지 할 때 오류 메시지 개선<a href="https://github.com/elastic/elasticsearch/pull/48915"></a></li>
+</ul>
+</li>
+<li>CCR 원격 복구 <a href="https://github.com/elastic/elasticsearch/pull/44514"># 44514</a> 에서 MultiFileTransfer 사용 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/44468"># 44468</a> )</li>
+</ul>
+<p><strong>CRUD</strong></p>
+<ul>
+<li>ID가 너무 길면 ID 세부 정보를 인쇄하십시오. <a href="https://github.com/elastic/elasticsearch/pull/49433"># 49433</a></li>
+<li>동적 매핑 업데이트 <a href="https://github.com/elastic/elasticsearch/pull/48817"># 48817에</a> 프리 플라이트 검사 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/35564"># 35564</a> )</li>
+</ul>
+<p><strong>클러스터 조정</strong></p>
+<ul>
+<li>
+<ul>
+<li>메타 데이터 저장소를 Lucene <a href="https://github.com/elastic/elasticsearch/pull/50907"># 50907</a> 로 이동 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48701"># 48701</a> )</li>
+</ul>
+</li>
+<li>맞춤 메타 데이터 도구 <a href="https://github.com/elastic/elasticsearch/pull/50813"># 50813</a> 제거 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48701"># 48701</a> )</li>
+</ul>
+<p><strong>분산</strong></p>
+<ul>
+<li>비공개 지수 <a href="https://github.com/elastic/elasticsearch/pull/48430"># 48430</a> 의 피어 복구시 보유 임대 사용 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/45136"># 45136</a> )</li>
+</ul>
+<p><strong>엔진</strong></p>
+<ul>
+<li>쓰기 인덱싱 버퍼 <a href="https://github.com/elastic/elasticsearch/pull/50769"># 50769를</a> 강제로 새로 고치지 마십시오<a href="https://github.com/elastic/elasticsearch/pull/50769"></a></li>
+<li>if_seq_no check <a href="https://github.com/elastic/elasticsearch/pull/50526"># 50526에</a> 대해 삭제 된 문서 무시<a href="https://github.com/elastic/elasticsearch/pull/50526"></a></li>
+<li><a href="https://github.com/elastic/elasticsearch/pull/48843">트랜스 로그 # 48843</a> 에서 실시간으로 읽기 허용<a href="https://github.com/elastic/elasticsearch/pull/48843"></a></li>
+<li>엔진 생성자 <a href="https://github.com/elastic/elasticsearch/pull/48605"># 48605</a> 에서 검색 <a href="https://github.com/elastic/elasticsearch/pull/48605">자를</a> 워밍업하지 마십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47186"># 47186</a> )</li>
+<li>강제 병합 <a href="https://github.com/elastic/elasticsearch/pull/48533"># 48533</a> 에서 이전 및 새 세그먼트를 인터리브하는 새 병합 정책 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/37043"># 37043</a> )</li>
+<li>새로 고침은 readLock <a href="https://github.com/elastic/elasticsearch/pull/48414"># 48414를</a> 얻지 않아야합니다 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47186"># 47186</a> )</li>
+</ul>
+<p><strong>특징 / ILM + SLM</strong></p>
+<ul>
+<li>새 정책에서 가능한 경우 캐시 된 단계 정책 정의 새로 고침… <a href="https://github.com/elastic/elasticsearch/pull/50820"># 50820</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48431"># 48431</a> )</li>
+<li>UpdateRolloverLifecycleDateStep 재시도 가능 <a href="https://github.com/elastic/elasticsearch/pull/50702"># 50702</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48183"># 48183</a> )</li>
+<li>InitializePolicyContextStep을 재 시도 할 수 있도록 <a href="https://github.com/elastic/elasticsearch/pull/50685"># 50685</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48183"># 48183</a> )</li>
+<li>ILM 재시도 가능한 비동기 조치 단계 <a href="https://github.com/elastic/elasticsearch/pull/50522"># 50522</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/44135"># 44135</a> , <a href="https://github.com/elastic/elasticsearch/issues/48183"># 48183</a> )</li>
+<li>TransportRolloverAction이 하나의 클러스터 상태 업데이트에서 실행되도록 <a href="https://github.com/elastic/elasticsearch/pull/50388"># 50388</a></li>
+<li>idx가 열리고 <a href="https://github.com/elastic/elasticsearch/pull/48614">닫히면</a> ILM 열기 / 닫기 단계는 noop입니다. <a href="https://github.com/elastic/elasticsearch/pull/48614"># 48614</a></li>
+<li>ILM <code>check-rollover-ready</code>단계 재시도 가능 <a href="https://github.com/elastic/elasticsearch/pull/48256"># 48256</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/44135"># 44135</a> )</li>
+</ul>
+<p><strong>특징 / 섭취</strong></p>
+<ul>
+<li>Foreach 프로세서-포크 재귀 호출 <a href="https://github.com/elastic/elasticsearch/pull/50514"># 50514</a></li>
+<li>로그 타시 패턴으로 grok 패턴 동기화 <a href="https://github.com/elastic/elasticsearch/pull/50381"># 50381</a></li>
+<li>필요한 파이프 라인을 최종 파이프 라인 <a href="https://github.com/elastic/elasticsearch/pull/49470"># 49470으로</a> 교체하십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49247"># 49247</a> ).</li>
+<li>프로세서 강화를위한 템플릿 지원 추가 <a href="https://github.com/elastic/elasticsearch/pull/49093"># 49093</a></li>
+<li>on_failure 블록 <a href="https://github.com/elastic/elasticsearch/pull/49076"># 49076</a> 내에 on_failure_pipeline 수집 메타 데이터 소개 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/44920"># 44920</a> )</li>
+<li>파이프 라인 프로세서에 템플릿 지원을 추가하십시오. <a href="https://github.com/elastic/elasticsearch/pull/49030"># 49030</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/39955"># 39955</a> )</li>
+<li>후행 빈 필드 <a href="https://github.com/elastic/elasticsearch/pull/48664"># 48664</a> 를 유지하기 위해 프로세서를 분할하는 옵션 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48498"># 48498</a> )</li>
+<li>grok watch dog를 스레드 기반이 아닌 Matcher 기반으로 변경하십시오. <a href="https://github.com/elastic/elasticsearch/pull/48346"># 48346</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/43673"># 43673</a> , <a href="https://github.com/elastic/elasticsearch/issues/47374"># 47374</a> )</li>
+<li>수집 사용자 에이전트 regexes.yml <a href="https://github.com/elastic/elasticsearch/pull/47807"># 47807</a> 업데이트</li>
+</ul>
+<p><strong>기능 / 자바 고급 REST 클라이언트</strong></p>
+<ul>
+<li>
+<ul>
+<li>HLRC <a href="https://github.com/elastic/elasticsearch/pull/49657"># 49657에</a> 원격 정보 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47678"># 47678</a> )</li>
+</ul>
+</li>
+<li>HLRC <a href="https://github.com/elastic/elasticsearch/pull/48819"># 48819에</a> 별명 삭제 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47678"># 47678</a> )</li>
+</ul>
+<p><strong>기능 / 모니터링</strong></p>
+<ul>
+<li>
+<ul>
+<li>상당히 낮은 모니터링 HttpExport 메모리 풋 프린트 <a href="https://github.com/elastic/elasticsearch/pull/48854"># 48854</a></li>
+</ul>
+</li>
+<li>구문 분석 시간 <a href="https://github.com/elastic/elasticsearch/pull/47912"># 47912</a> 에서 프록시 기본 경로의 유효성을 검사 <a href="https://github.com/elastic/elasticsearch/pull/47912">하십시오</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47711"># 47711</a> )</li>
+<li>구문 분석 시간 <a href="https://github.com/elastic/elasticsearch/pull/47911"># 47911</a> 에서 색인 이름 시간 형식 설정의 유효성을 검사하십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47711"># 47711</a> )</li>
+<li>구문 분석 시간 <a href="https://github.com/elastic/elasticsearch/pull/47848"># 47848</a> 에서 모니터링 헤더 재정의 유효성 검사 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47711"># 47711</a> )</li>
+<li>구문 분석 시간 <a href="https://github.com/elastic/elasticsearch/pull/47821"># 47821</a> 에서 모니터링 사용자 이름의 유효성을 검사 <a href="https://github.com/elastic/elasticsearch/pull/47821">하십시오</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47711"># 47711</a> )</li>
+<li>구문 분석 시간 <a href="https://github.com/elastic/elasticsearch/pull/47740"># 47740</a> 에서 모니터링 암호 유효성 검사 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47711"># 47711</a> )</li>
+</ul>
+<p><strong>특징 / 통계</strong></p>
+<ul>
+<li>클러스터 통계 <a href="https://github.com/elastic/elasticsearch/pull/48485"># 48485에</a> 수집 정보 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/46146"># 46146</a> )</li>
+</ul>
+<p><strong>특징 / 관찰자</strong></p>
+<ul>
+<li>
+<ul>
+<li>첨부 파일 생성 실패 <a href="https://github.com/elastic/elasticsearch/pull/50080"># 50080</a></li>
+</ul>
+</li>
+<li>elasticse를 실행할 때 유효하지 않은 패턴에 대해 스택 <a href="https://github.com/elastic/elasticsearch/pull/49744">추적을</a> 덤프하지 마십시오… <a href="https://github.com/elastic/elasticsearch/pull/49744"># 49744</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49642"># 49642</a> )</li>
+</ul>
+<p><strong>지리</strong></p>
+<ul>
+<li>
+<ul>
+<li>BKD 지원 geo_shape 및 shape 필드 <a href="https://github.com/elastic/elasticsearch/pull/50141"># 50141에</a> 대한 &ldquo;컨테이너&quot;지원 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/41204">#</a> <a href="https://github.com/elastic/elasticsearch/pull/50141">41204</a> )</li>
+</ul>
+</li>
+<li>지오그리드 집계 <a href="https://github.com/elastic/elasticsearch/pull/50002"># 50002</a> 에서 지오 바운드 필터링 지원 추가<a href="https://github.com/elastic/elasticsearch/pull/50002"></a></li>
+<li>더 빠른 근사 sinh / atan 수학 함수 소개 <a href="https://github.com/elastic/elasticsearch/pull/49009"># 49009</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/41166"># 41166</a> )</li>
+<li>GeoPolygonQueryBuilder <a href="https://github.com/elastic/elasticsearch/pull/48449">#</a> 48449에 IndexOrDocValuesQuery 추가</li>
+</ul>
+<p><strong>인프라 / 코어</strong></p>
+<ul>
+<li>
+<ul>
+<li>ObjectParser <a href="https://github.com/elastic/elasticsearch/pull/50938"># 50938에</a> &ldquo;의미 있습니까?&ldquo;추가<a href="https://github.com/elastic/elasticsearch/pull/50938"></a></li>
+</ul>
+</li>
+<li>CLI 옵션 설명의 일관된 사례 <a href="https://github.com/elastic/elasticsearch/pull/49635"># 49635</a></li>
+<li>서버 <a href="https://github.com/elastic/elasticsearch/pull/48553"># 48553</a> 에서 JSON 형식 지정에 대한 복원력 향상 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48450"># 48450</a> )</li>
+<li><code>--quiet</code>  <a href="https://github.com/elastic/elasticsearch/pull/47208"># 47208</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/46900"># 46900</a> )에서 stderr를 닫지 마십시오</li>
+</ul>
+<p><strong>인프라 / 포장</strong></p>
+<ul>
+<li>
+<ul>
+<li>패키지 설치 <a href="https://github.com/elastic/elasticsearch/pull/50158"># 50158</a> 에서 ES_PATH_CONF를 존중하십시오.<a href="https://github.com/elastic/elasticsearch/pull/50158"></a></li>
+</ul>
+</li>
+<li>CMS에 대한 지원을 JDK 14 <a href="https://github.com/elastic/elasticsearch/pull/49123"># 49123</a> 이전으로 제한 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/46973"># 46973</a> )</li>
+<li>Windows 서비스 디먼 관리자 <a href="https://github.com/elastic/elasticsearch/pull/49061"># 49061의</a> 일반 설정에서 구문 분석 된 JVM 설정 제거 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48796"># 48796</a> )</li>
+<li>macOS <a href="https://github.com/elastic/elasticsearch/pull/48765"># 48765</a> 에서 JDK를 jdk.app에 패키지<a href="https://github.com/elastic/elasticsearch/pull/48765"></a></li>
+<li>UBI 기반 Docker 이미지 <a href="https://github.com/elastic/elasticsearch/pull/48710"># 48710 추가</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48429"># 48429</a> )</li>
+</ul>
+<p><strong>인프라 / 플러그인</strong></p>
+<ul>
+<li>
+<ul>
+<li>여러 플러그인 설치 진행률보고 <a href="https://github.com/elastic/elasticsearch/pull/51001"># 51001</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50924"># 50924</a> )</li>
+</ul>
+</li>
+<li>트랜잭션 <a href="https://github.com/elastic/elasticsearch/pull/50924"># 50924</a> 로 여러 플러그인 설치 허용 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50443"># 50443</a> )</li>
+</ul>
+<p><strong>인프라 / 스크립팅</strong></p>
+<ul>
+<li>
+<ul>
+<li>스크립팅 : 컴파일 <a href="https://github.com/elastic/elasticsearch/pull/50344">#</a> 50344에 ​​ScriptFactory가 필요하지 않음 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49466"># 49466</a> )</li>
+</ul>
+</li>
+<li>스크립팅 : 결정적 <a href="https://github.com/elastic/elasticsearch/pull/50106"># 50106 인</a> 경우 스크립트 결과 캐시 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49466"># 49466</a> )</li>
+<li>스크립팅 : 스크립트 결과 캐싱을위한 기초 <a href="https://github.com/elastic/elasticsearch/pull/49895"># 49895</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49466"># 49466</a> )</li>
+<li>스크립팅 : 사용 가능한 언어 및 컨텍스트 추가 API <a href="https://github.com/elastic/elasticsearch/pull/49652"># 49652</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49463"># 49463</a> )</li>
+<li>스크립팅 : 컨텍스트 가져 오기 REST API <a href="https://github.com/elastic/elasticsearch/pull/48319"># 48319 작성</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47411"># 47411</a> )</li>
+<li>스크립팅 : 컨텍스트 이름 가져 오기 REST API <a href="https://github.com/elastic/elasticsearch/pull/48026"># 48026</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47411"># 47411</a> )</li>
+</ul>
+<p><strong>인프라 / 설정</strong></p>
+<ul>
+<li>
+<ul>
+<li>IndexSetting 업데이트 로그가 더 자세한 <a href="https://github.com/elastic/elasticsearch/pull/49969"># 49969</a> 가되도록 매개 변수를 추가하십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49818"># 49818</a> )</li>
+</ul>
+</li>
+<li>종속 설정 값의 유효성을 검사합니다. <a href="https://github.com/elastic/elasticsearch/pull/49942"># 49942</a></li>
+<li>필터링 된 설정에 대한 값을 참조하지 마십시오 <a href="https://github.com/elastic/elasticsearch/pull/48066"># 48066</a></li>
+</ul>
+<p><strong>특허</strong></p>
+<ul>
+<li>
+<ul>
+<li>엔터프라이즈 라이센스 <a href="https://github.com/elastic/elasticsearch/pull/50735"># 50735에 max_resource_units</a> 추가<a href="https://github.com/elastic/elasticsearch/pull/50735"></a></li>
+</ul>
+</li>
+<li>라이센스 유형 <a href="https://github.com/elastic/elasticsearch/pull/49418"># 49418</a> 을 제한하는 설정 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48508"># 48508</a> )</li>
+<li>&ldquo;기업&quot;라이센스 유형 <a href="https://github.com/elastic/elasticsearch/pull/49223"># 49223 지원</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48510"># 48510</a> )</li>
+</ul>
+<p><strong>기계 학습</strong></p>
+<ul>
+<li>작업 <a href="https://github.com/elastic/elasticsearch/pull/51146"># 51146</a> 에서 일찍 발견 된 1000 개 범주에 대한 감사 경고 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50749"># 50749</a> )</li>
+<li><code>num_top_feature_importance_values</code>회귀 및 분류에 매개 변수 추가 <a href="https://github.com/elastic/elasticsearch/pull/50914"># 50914</a></li>
+<li>데이터 프레임 분석 작업 <a href="https://github.com/elastic/elasticsearch/pull/50553"># 50553을</a> 강제로 삭제 구현 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48124"># 48124</a> )</li>
+<li>사용하지 않는 데이터 프레임 분석 상태 삭제 <a href="https://github.com/elastic/elasticsearch/pull/50243"># 50243</a></li>
+<li>각 분석 보고서를 원하는 필드 매핑으로 복사하도록하십시오 <a href="https://github.com/elastic/elasticsearch/pull/50219"># 50219</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50119"># 50119</a> )</li>
+<li>상태 문서 <a href="https://github.com/elastic/elasticsearch/pull/50149"># 50149</a> 의 대량 인덱싱 재시도 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50143"># 50143</a> )</li>
+<li>데이터 프레임 분석 분류 <a href="https://github.com/elastic/elasticsearch/pull/50040"># 50040의</a> 지속 / 복원 상태<a href="https://github.com/elastic/elasticsearch/pull/50040"></a></li>
+<li><code>randomize_seed</code>회귀 및 분류 설정 소개 <a href="https://github.com/elastic/elasticsearch/pull/49990"># 49990</a></li>
+<li>패스 <code>prediction_field_type</code>C ++ 분석에 처리 <a href="https://github.com/elastic/elasticsearch/pull/49861"># 49861</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49796"># 49796</a> )</li>
+<li>데이터 프레임 <a href="https://github.com/elastic/elasticsearch/pull/49690">재색 인화 # 49690</a> 중 선택적 소스 필터링 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49531"># 49531</a> )</li>
+<li>ML 정보 <a href="https://github.com/elastic/elasticsearch/pull/49545"># 49545에</a> 기본 분류 분석기 정의 추가<a href="https://github.com/elastic/elasticsearch/pull/49545"></a></li>
+<li>이상 탐지기 결과 인덱싱 실패 <a href="https://github.com/elastic/elasticsearch/pull/49508"># 49508에</a> 대한 재시도 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/45711"># 45711</a> )</li>
+<li>1MB에서 1kB <a href="https://github.com/elastic/elasticsearch/pull/49227"># 49227</a> 까지 데이터 프레임 분석 작업에 대한 최소 모델 메모리 제한 값 <a href="https://github.com/elastic/elasticsearch/pull/49227">낮추기</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49168"># 49168</a> )</li>
+<li><code>model_memory_limit</code>데이터 프레임 분석 작업에 대 한 사용자 경험 향상 <a href="https://github.com/elastic/elasticsearch/pull/44699"># 44699</a></li>
+<li>분류 및 회귀 <a href="https://github.com/elastic/ml-cpp/pull/775"># 775에</a> 대한 강화 트리 훈련 성능 향상<a href="https://github.com/elastic/ml-cpp/pull/775"></a></li>
+<li>강화 된 트리 트레이닝에서 사용되는 최대 메모리를 줄이고 최대 메모리 사용량을 추정하는 과도한 버그 수정 <a href="https://github.com/elastic/ml-cpp/pull/781"># 781</a></li>
+<li>회귀 <a href="https://github.com/elastic/ml-cpp/pull/784"># 784에</a> 대한 층화 된 소수 교차 검증<a href="https://github.com/elastic/ml-cpp/pull/784"></a></li>
+<li>기능 레코드 <a href="https://github.com/elastic/ml-cpp/pull/809"># 809</a> , <a href="https://github.com/elastic/elasticsearch/pull/47050"># 47050에</a><code>geo_point</code> 대해 지원되는 출력이 추가되었습니다.<code>lat_long</code><a href="https://github.com/elastic/ml-cpp/pull/809"></a><a href="https://github.com/elastic/elasticsearch/pull/47050"></a></li>
+<li>모두 회귀 및 분류를 위해 훈련 때마다 새로운 나무의 손실 함수 유도체 계산하기 위해 데이터의 임의의 가방을 사용 <a href="https://github.com/elastic/ml-cpp/pull/811"># 811</a></li>
+<li><code>prediction_probability</code>ml 결과에서 예측 필드와 함께 필드를 방출 <a href="https://github.com/elastic/ml-cpp/pull/818"># 818</a></li>
+<li>Windows에서 기계 학습 기본 프로세스의 메모리 사용량 감소 <a href="https://github.com/elastic/ml-cpp/pull/844"># 844</a></li>
+<li>분류 및 회귀 런타임 감소 <a href="https://github.com/elastic/ml-cpp/pull/863"># 863</a></li>
+<li>유효성 검사 오류가 더 이상 감소하지 않으면 분류 및 회귀 포리스트 조기 교육 중지 <a href="https://github.com/elastic/ml-cpp/pull/875"># 875</a></li>
+<li>매개 변수 <a href="https://github.com/elastic/ml-cpp/pull/877"># 877</a><code>prediction_field_name</code> 로 제공된 유형을 사용하여 데이터 프레임 분석 결과에서 방출<code>prediction_field_type</code><a href="https://github.com/elastic/ml-cpp/pull/877"></a></li>
+<li>Quantile 추정치 업데이트 성능 개선 <a href="https://github.com/elastic/ml-cpp/pull/881"># 881</a></li>
+<li>초기 하이퍼 파라미터 값 라인 검색에 베이지안 최적화를 사용하도록 마이그레이션하고 예상 개선이 너무 작은 경우 일찍 중지하십시오 <a href="https://github.com/elastic/ml-cpp/pull/903"># 903</a></li>
+<li>예측 테스트 손실이 지금까지 발견 된 최적의 매개 변수 값보다 작은되는 작은 기회가 초기의 경우 교차 검증 중지 <a href="https://github.com/elastic/ml-cpp/pull/915"># 915</a></li>
+<li>최소 클래스 리콜 <a href="https://github.com/elastic/ml-cpp/pull/926"># 926</a> 을 최대화하기 위해 분류에 대한 결정 임계 값 최적화<a href="https://github.com/elastic/ml-cpp/pull/926"></a></li>
+<li>노드 할당 결정 <a href="https://github.com/elastic/ml-cpp/pull/927"># 927</a> (문제 : <a href="https://github.com/elastic/ml-cpp/issues/724"># 724</a> ) 에서 고려되도록 <code>model_bytes</code>필드에 분류 메모리 사용량을 포함 <code>model_size_stats</code>시키십시오 .</li>
+</ul>
+<p><strong>매핑</strong></p>
+<ul>
+<li>평평한 필드에 원격 측정을 추가합니다. <a href="https://github.com/elastic/elasticsearch/pull/48972"># 48972</a></li>
+</ul>
+<p><strong>회로망</strong></p>
+<ul>
+<li>
+<ul>
+<li>certutil http 명령 <a href="https://github.com/elastic/elasticsearch/pull/49827"># 49827</a> 추가<a href="https://github.com/elastic/elasticsearch/pull/49827"></a></li>
+</ul>
+</li>
+<li>플러그인 생성자 <a href="https://github.com/elastic/elasticsearch/pull/49667"># 49667</a> 에서 SSLService를로드하지 마십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/44536"># 44536</a> )</li>
+<li>Netty4 : 복합 누적 기 <a href="https://github.com/elastic/elasticsearch/pull/49478"># 49478로 전환</a></li>
+<li>클러스터 설정 <a href="https://github.com/elastic/elasticsearch/pull/49414"># 49414에</a> 간단한 전략 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49067"># 49067</a> )</li>
+<li>잘못 구성된 SSL 서버 구성 <a href="https://github.com/elastic/elasticsearch/pull/49280"># 49280 더 이상</a> 사용되지 않음 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/45892"># 45892</a> )</li>
+<li>TLS 트러스트 실패에 대한 향상된 진단 기능 <a href="https://github.com/elastic/elasticsearch/pull/48911"># 48911</a></li>
+</ul>
+<p><strong>여과기</strong></p>
+<ul>
+<li>QueryVisitors <a href="https://github.com/elastic/elasticsearch/pull/49238">#</a> 49238을 사용하기 위해 여과기의 QueryAnalyzer 리팩터링 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/45639"># 45639</a> )</li>
+</ul>
+<p><strong>순위</strong></p>
+<ul>
+<li><code>search_type</code>순위 평가 API <a href="https://github.com/elastic/elasticsearch/pull/48542"># 48542</a> 지원 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48503"># 48503</a> )</li>
+</ul>
+<p><strong>회복</strong></p>
+<ul>
+<li>
+<ul>
+<li>소프트 삭제 <a href="https://github.com/elastic/elasticsearch/pull/50351"># 50351이</a> 없는 인덱스에 대해 피어 복구 보존 임대를 사용하십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/45136"># 45136</a> , <a href="https://github.com/elastic/elasticsearch/issues/46959"># 46959</a> )</li>
+</ul>
+</li>
+<li>복구 버퍼 크기 16B 더 작은 <a href="https://github.com/elastic/elasticsearch/pull/50100"># 50100</a></li>
+</ul>
+<p><strong>재색 인</strong></p>
+<ul>
+<li><a href="https://github.com/elastic/elasticsearch/pull/49855">재색 인</a> 정렬 사용 중단 경고에 2 <a href="https://github.com/elastic/elasticsearch/pull/49855"># 49855 소요</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49458"># 49458</a> )</li>
+</ul>
+<p><strong>SQL</strong></p>
+<ul>
+<li>SQL : ES jdbc 드라이버 파일이 다른 jar <a href="https://github.com/elastic/elasticsearch/pull/51856"># 51856에</a> 번들로 제공되는 uberjar 시나리오 처리 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50201"># 50201</a> )</li>
+<li>SQL : 서버 <a href="https://github.com/elastic/elasticsearch/pull/50530"># 50530</a> 에서 오는 검색 응답에 대한 추적 로깅 추가<a href="https://github.com/elastic/elasticsearch/pull/50530"></a></li>
+<li>SQL : TRUNCATE <a href="https://github.com/elastic/elasticsearch/pull/49571"># 49571에</a> TRUNC 별명 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/41195"># 41195</a> )</li>
+<li>SQL : 드라이버 및 CLI <a href="https://github.com/elastic/elasticsearch/pull/48261"># 48261에</a> 대한 이진 통신 구현 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47785"># 47785</a> )</li>
+<li>SQL : SELECT <a href="https://github.com/elastic/elasticsearch/pull/51568"># 51568</a> 에서 전체 텍스트 검색 기능이 허용되지 <a href="https://github.com/elastic/elasticsearch/pull/51568">않는지 확인</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47446"># 47446</a> )</li>
+</ul>
+<p><strong>검색</strong></p>
+<ul>
+<li>MoreLikeThisQuery <a href="https://github.com/elastic/elasticsearch/pull/49966"># 49966에</a> 대해 maxQueryTerms에 대한 유효성 검증을 0보다 크게 추가하십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49927"># 49927</a> )</li>
+<li>match_all 쿼리 <a href="https://github.com/elastic/elasticsearch/pull/49717"># 49717</a> 에서 숫자 정렬 최적화 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48804"># 48804</a> )</li>
+<li>기본 정렬 필드 <a href="https://github.com/elastic/elasticsearch/pull/49092"># 49092</a> 의 최대 / 최소값을 기반으로 사전 정렬 샤드 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49091"># 49091</a> )</li>
+<li>긴 필드 <a href="https://github.com/elastic/elasticsearch/pull/48804"># 48804</a> 에서 정렬 최적화<a href="https://github.com/elastic/elasticsearch/pull/48804"></a></li>
+<li>검색 최적화- &ldquo;_index&quot;필드 <a href="https://github.com/elastic/elasticsearch/pull/48681"># 48681</a> 에서 쿼리에 대한 canMatch 조기 중단 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48473"># 48473</a> )</li>
+<li>
+<h1 id="48475-순수-disjunctions는-matchnonequerybuilder에-다시-작성해야--48557httpsgithubcomelasticelasticsearchpull48557">48475 순수 disjunctions는 MatchNoneQueryBuilder에 다시 작성해야 <a href="https://github.com/elastic/elasticsearch/pull/48557"># 48557</a></h1>
+</li>
+<li>쿼리가 <a href="https://github.com/elastic/elasticsearch/pull/48195"># 48195</a> 프로파일 링 될 때 캐싱 비활성화 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/33298"># 33298</a> )</li>
+<li>BlendedTermQuery의 equals 메소드는 <a href="https://github.com/elastic/elasticsearch/pull/48193"># 48193</a> 부스트를 고려해야합니다 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48184"># 48184</a> )</li>
+<li>2048로 벡터 <a href="https://github.com/elastic/elasticsearch/pull/46895">딤</a> 의 수를 증가시킵니다 <a href="https://github.com/elastic/elasticsearch/pull/46895"># 46895</a></li>
+</ul>
+<p><strong>보안</strong></p>
+<ul>
+<li>.async-search- *를 제한된 네임 스페이스로 만들기 <a href="https://github.com/elastic/elasticsearch/pull/50294"># 50294</a></li>
+<li>보안은 <a href="https://github.com/elastic/elasticsearch/pull/50207"># 50207을</a> 변경하지 않은 파일을 다시로드하지 <a href="https://github.com/elastic/elasticsearch/pull/50207">않아야합니다</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50063"># 50063</a> )</li>
+</ul>
+<p><strong>스냅 샷 / 복원</strong></p>
+<ul>
+<li>클러스터 상태를 사용하여 리포지토리 생성 <a href="https://github.com/elastic/elasticsearch/pull/49729"># 49729</a> 추적 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49060"># 49060</a> )</li>
+<li>BlobStoreRepository <a href="https://github.com/elastic/elasticsearch/pull/48944"># 48944의</a> 저장소 리포지토리 <a href="https://github.com/elastic/elasticsearch/pull/48944">생성</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/38941"># 38941</a> , <a href="https://github.com/elastic/elasticsearch/issues/47520"># 47520</a> , <a href="https://github.com/elastic/elasticsearch/issues/47834"># 47834</a> , <a href="https://github.com/elastic/elasticsearch/issues/49048"># 49048</a> )</li>
+<li>병렬 <a href="https://github.com/elastic/elasticsearch/pull/48110"># 48110의</a> 개별 샤드 스냅 샷 파일에서 복원 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/42791"># 42791</a> )</li>
+<li>리포지토리 루트 <a href="https://github.com/elastic/elasticsearch/pull/46250"># 46250</a> 에서 샤드 스냅 샷 인덱스 생성 추적 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/38941"># 38941</a> , <a href="https://github.com/elastic/elasticsearch/issues/45736"># 45736</a> )</li>
+</ul>
+<p><strong>저장</strong></p>
+<ul>
+<li>HybridDirectory <a href="https://github.com/elastic/elasticsearch/pull/49272"># 49272의</a> mmap dim 파일 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48509"># 48509</a> )</li>
+</ul>
+<p><strong>변환</strong></p>
+<ul>
+<li>오류 발생시 강제 정지 견고성 향상 <a href="https://github.com/elastic/elasticsearch/pull/51072"># 51072</a></li>
+<li>메시지 <a href="https://github.com/elastic/elasticsearch/pull/50140"># 50140</a> 에 실제 시간 초과 추가<a href="https://github.com/elastic/elasticsearch/pull/50140"></a></li>
+<li>이전 체크 포인트 자동 삭제 <a href="https://github.com/elastic/elasticsearch/pull/49496"># 49496</a></li>
+<li>스크립트 오류 <a href="https://github.com/elastic/elasticsearch/pull/48887"># 48887</a> 의 오류 처리 개선 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48467"># 48467</a> )</li>
+<li><a href="https://github.com/elastic/elasticsearch/pull/47935"># 47935</a><code>wait_for_checkpoint</code> 를 중지시키는 플래그 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/45293"># 45293</a> )</li>
+</ul>
+<h1 id="버그-수정">버그 수정</h1>
+<p><strong>집계</strong></p>
+<ul>
+<li>문서 값 <a href="https://github.com/elastic/elasticsearch/pull/51920"># 51920을</a> 생성 할 때 #simpleName () 대신 #name ()을 사용하십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50307"># 50307</a> , <a href="https://github.com/elastic/elasticsearch/issues/51847"># 51847</a> )</li>
+<li>rare_terms <a href="https://github.com/elastic/elasticsearch/pull/51868"># 51868</a> 에서 부적절한 버그 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/51020"># 51020</a> )</li>
+<li>합성 날짜 _ 히스토그램 <a href="https://github.com/elastic/elasticsearch/pull/51172"># 51172</a> 의 시간대 지원 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/45199"># 45199</a> , <a href="https://github.com/elastic/elasticsearch/issues/45200"># 45200</a> )</li>
+<li>매핑되지 않은 <a href="https://github.com/elastic/elasticsearch/pull/50869"># 50869의</a> 합성 형식 문제 해결 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50600"># 50600</a> )</li>
+<li>SingleBucket aggs는 먼저 버킷 파이프 라인을 <a href="https://github.com/elastic/elasticsearch/pull/50103"># 50103으로 줄여야합니다</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50054"># 50054</a> )</li>
+<li>DocValueFormat.RAW # parseLong <a href="https://github.com/elastic/elasticsearch/pull/49063"># 49063</a> 에서 정밀도 손실을 피하십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/38692"># 38692</a> )</li>
+<li>최소 / 최대 집계 <a href="https://github.com/elastic/elasticsearch/pull/48970"># 48970</a> 에서 누락 된 값을 무시하도록 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48905"># 48905</a> )</li>
+</ul>
+<p><strong>배당</strong></p>
+<ul>
+<li>비공개 지수 <a href="https://github.com/elastic/elasticsearch/pull/50645"># 50645에</a> 대한 샤드 크기 수집 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/33888"># 33888</a> )</li>
+<li>자동 확장 복제 된 닫힌 인덱스 <a href="https://github.com/elastic/elasticsearch/pull/48973"># 48973</a></li>
+<li>최신 버전 <a href="https://github.com/elastic/elasticsearch/pull/48652"># 48652</a> 에서 생성 된 매달린 인덱스 무시 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/34264"># 34264</a> )</li>
+<li>결정자 <a href="https://github.com/elastic/elasticsearch/pull/48392"># 48392</a> 에서 음의 여유 디스크 공간 처리 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48380"># 48380</a> )</li>
+</ul>
+<p><strong>분석</strong></p>
+<ul>
+<li>PreConfiguredTokenFilter <a href="https://github.com/elastic/elasticsearch/pull/50912"># 50912의</a> 캐싱 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50734"># 50734</a> )</li>
+<li>더 이상 사용되지 않는 nGram 및 edgeNGram 사용자 정의 필터 <a href="https://github.com/elastic/elasticsearch/pull/50376"># 50376</a> 에서 오류 <a href="https://github.com/elastic/elasticsearch/pull/50376">발생</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50360"># 50360</a> )</li>
+<li>_analyze api는 <a href="https://github.com/elastic/elasticsearch/pull/48866"># 48866을</a> 지정할 때 노멀 라이저를 올바르게 사용하지 않습니다 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48650"># 48650</a> )</li>
+</ul>
+<p><strong>심사</strong></p>
+<ul>
+<li>감사 로그 필터 및 마커 <a href="https://github.com/elastic/elasticsearch/pull/45456"># 45456</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47251"># 47251</a> )</li>
+</ul>
+<p><strong>입증</strong></p>
+<ul>
+<li>비동기 검증을 위해 ApiKey 자격 증명 유지 <a href="https://github.com/elastic/elasticsearch/pull/51244"># 51244</a></li>
+<li>토큰 / apikeys <a href="https://github.com/elastic/elasticsearch/pull/51042"># 51042에</a> 대해 익명으로 대체하지 마십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50171"># 50171</a> )</li>
+<li>OpenIDConnect 컬렉션 <a href="https://github.com/elastic/elasticsearch/pull/50521"># 50521로</a> 사용자 메타 데이터를 채 웁니다 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50250"># 50250</a> )</li>
+<li>유효하지 않은 토큰 <a href="https://github.com/elastic/elasticsearch/pull/49736"># 49736에</a> 대해 항상 401을 반환합니다 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/38866"># 38866</a> ).</li>
+<li>스마트 영역 순서에서 1부터 반복 버그 수정 <a href="https://github.com/elastic/elasticsearch/pull/49473"># 49473</a></li>
+<li>OIDC <a href="https://github.com/elastic/elasticsearch/pull/48746"># 48746에</a> 대해 기록 된 불필요한 세부 사항 제거<a href="https://github.com/elastic/elasticsearch/pull/48746"></a></li>
+<li>나머지 스펙 <a href="https://github.com/elastic/elasticsearch/pull/48500"># 48500에</a> 소유자 플래그 매개 변수 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48499"># 48499</a> )</li>
+</ul>
+<p><strong>권한 부여</strong></p>
+<ul>
+<li>DLS <a href="https://github.com/elastic/elasticsearch/pull/50635">비트</a> 캐시 <a href="https://github.com/elastic/elasticsearch/pull/50635">350635</a> 에서 메모리 누수 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49261"># 49261</a> )</li>
+<li>유효성 검사 필드 권한은 역할을 만들 때 <a href="https://github.com/elastic/elasticsearch/pull/50212"># 50212</a> (: 문제 <a href="https://github.com/elastic/elasticsearch/issues/46275"># 46275</a> , <a href="https://github.com/elastic/elasticsearch/issues/48108"># 48108를</a> )</li>
+<li>역할 <a href="https://github.com/elastic/elasticsearch/pull/48108"># 48108을</a> 작성할 때 필드 권한의 유효성을 검증 <a href="https://github.com/elastic/elasticsearch/pull/48108">하십시오</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/46275">#</a> <a href="https://github.com/elastic/elasticsearch/pull/48108">46275</a> )</li>
+</ul>
+<p><strong>CCR</strong></p>
+<ul>
+<li>CCR은 거부 된 실행 예외를 자동 재 시도해야합니다. <a href="https://github.com/elastic/elasticsearch/pull/49213"># 49213</a></li>
+</ul>
+<p><strong>CRUD</strong></p>
+<ul>
+<li>너무 많은 동시 매핑 업데이트 <a href="https://github.com/elastic/elasticsearch/pull/51038"># 51038 차단</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50670"># 50670</a> )</li>
+<li>GetResult <a href="https://github.com/elastic/elasticsearch/pull/50112"># 50112</a> 에서 메타 및 문서 필드 맵이 널이 <a href="https://github.com/elastic/elasticsearch/pull/50112">아닌지 확인하십시오</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48215"># 48215</a> )</li>
+<li>그들을 <a href="https://github.com/elastic/elasticsearch/pull/49746">fsyncing</a> 전에 쓰기 동작을 복제 <a href="https://github.com/elastic/elasticsearch/pull/49746"># 49746</a></li>
+<li>스크립팅 된 upsert <a href="https://github.com/elastic/elasticsearch/pull/49578"># 49578</a> 에서 요청을 변경하지 마십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48670"># 48670</a> )</li>
+<li>전송 중지 예외 <a href="https://github.com/elastic/elasticsearch/pull/48930"># 48930</a> 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/42612"># 42612</a> )</li>
+<li>업데이트 <a href="https://github.com/elastic/elasticsearch/pull/48707"># 48707</a> 에서 일관된 소스 반환<a href="https://github.com/elastic/elasticsearch/pull/48707"></a></li>
+<li>인덱스 서비스 생성 실패 <a href="https://github.com/elastic/elasticsearch/pull/48230"># 48230</a> 에서 쿼리 캐시 닫기 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48186"># 48186</a> )</li>
+</ul>
+<p><strong>클러스터 조정</strong></p>
+<ul>
+<li>복제 된 닫힌 매달린 인덱스 가져 오기 <a href="https://github.com/elastic/elasticsearch/pull/50649"># 50649</a></li>
+<li>시작시 삭제 된 인덱스의 메타 데이터 무시 <a href="https://github.com/elastic/elasticsearch/pull/48918"># 48918</a></li>
+<li>elasticsearch-node 도구 사용자 정의 메타 데이터 인식 <a href="https://github.com/elastic/elasticsearch/pull/48390"># 48390 만들기</a></li>
+</ul>
+<p><strong>디스커버리 플러그인</strong></p>
+<ul>
+<li>EC2 Discovery Cache를 빈 시드 호스트 목록 <a href="https://github.com/elastic/elasticsearch/pull/50607"># 50607로 설정</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50550"># 50550</a> )</li>
+<li>EC2 <a href="https://github.com/elastic/elasticsearch/issues/50462">감지</a> 플러그인 재시도 요청 <a href="https://github.com/elastic/elasticsearch/pull/50550"># 50550</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50462"># 50462</a> )</li>
+</ul>
+<p><strong>분산</strong></p>
+<ul>
+<li>LuceneChangesSnapshot에 중첩 된 문서를 제외 <a href="https://github.com/elastic/elasticsearch/pull/51279"># 51279</a></li>
+<li>닫힌 파편은 새 엔진 <a href="https://github.com/elastic/elasticsearch/pull/47186"># 47186을</a> 열면 안됩니다 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/45263"># 45263</a> , <a href="https://github.com/elastic/elasticsearch/issues/47060"># 47060</a> )</li>
+<li>작업 인덱스 매핑 <a href="https://github.com/elastic/elasticsearch/pull/50363"># 50363</a> 의 메타 버전 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48393"># 48393</a> )</li>
+</ul>
+<p><strong>엔진</strong></p>
+<ul>
+<li>세그먼트 통계 <a href="https://github.com/elastic/elasticsearch/pull/51331"># 51331의</a> 소프트 삭제 리더를 래핑하지 마십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/51192"># 51192</a> , <a href="https://github.com/elastic/elasticsearch/issues/51303"># 51303</a> )</li>
+<li>FrozenEngine <a href="https://github.com/elastic/elasticsearch/pull/51192"># 51192의</a> 계정 소프트 삭제 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50775"># 50775</a> )</li>
+<li>커밋 된 트랜스 로그 생성 <a href="https://github.com/elastic/elasticsearch/pull/50205"># 50205의</a> 계정 트림 <a href="https://github.com/elastic/elasticsearch/pull/50205">AboveSeqNo</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49970"># 49970</a> )</li>
+<li>새로운 글로벌 체크 포인트 <a href="https://github.com/elastic/elasticsearch/pull/48559"># 48559에</a> 대해 <a href="https://github.com/elastic/elasticsearch/pull/48559">탐욕적으로</a> 안전한 커밋을 진행 <a href="https://github.com/elastic/elasticsearch/pull/48559">하십시오</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48532"># 48532</a> )</li>
+<li>참조되지 않은 독자를 다듬을 때 예외를 무시하지 마십시오 <a href="https://github.com/elastic/elasticsearch/pull/48470"># 48470</a></li>
+</ul>
+<p><strong>특징 / 특징</strong></p>
+<ul>
+<li>X-Pack 스케줄러 <a href="https://github.com/elastic/elasticsearch/pull/48951">엔진</a> 종료 <a href="https://github.com/elastic/elasticsearch/pull/48951"># 48951 수정</a></li>
+</ul>
+<p><strong>특징 / ILM + SLM</strong></p>
+<ul>
+<li>복원 진행중인 SLM 검사 수정 <a href="https://github.com/elastic/elasticsearch/pull/50868"># 50868</a></li>
+<li>ILM 정책 단계 검색 실패 처리 <a href="https://github.com/elastic/elasticsearch/pull/49193"># 49193</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49128">#</a> <a href="https://github.com/elastic/elasticsearch/pull/49193">49128</a> )</li>
+<li>정책 트리거 예외 <a href="https://github.com/elastic/elasticsearch/pull/49128"># 49128</a> 에서 정책 실행을 중단하지 마십시오<a href="https://github.com/elastic/elasticsearch/pull/49128"></a></li>
+<li>ILM의 단계별 API <a href="https://github.com/elastic/elasticsearch/pull/48827"># 48827</a> 을 사용할 때 정책 단계 JSON을 다시 읽으 <a href="https://github.com/elastic/elasticsearch/pull/48827">십시오.</a></li>
+<li>서비스가 <a href="https://github.com/elastic/elasticsearch/pull/48658"># 48658</a> 중지 된 경우 SLM 작업을 예약하지 마십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47749"># 47749</a> )</li>
+<li>SLM 통계가 7.4 <a href="https://github.com/elastic/elasticsearch/pull/48367"># 48367</a> 에서 전체 업그레이드를 차단하지 않는지 확인<a href="https://github.com/elastic/elasticsearch/pull/48367"></a></li>
+<li>SLM 통계가 7.4 <a href="https://github.com/elastic/elasticsearch/pull/48361"># 48361</a> 에서 전체 업그레이드를 차단하지 않도록하십시오<a href="https://github.com/elastic/elasticsearch/pull/48361"></a></li>
+<li>xpack 사용법 및 정보 API <a href="https://github.com/elastic/elasticsearch/pull/48096"># 48096에</a> SLM 지원 추가 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/43663"># 43663</a> )</li>
+<li>slm.get_lifecycle <a href="https://github.com/elastic/elasticsearch/pull/47766"># 47766의</a> 목록 유형으로 policy_id를 변경하십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47765"># 47765</a> )</li>
+</ul>
+<p><strong>특징 / 섭취</strong></p>
+<ul>
+<li>CsvProcessor <a href="https://github.com/elastic/elasticsearch/pull/51600"># 51600</a> 에서 ignore_missing 수정<a href="https://github.com/elastic/elasticsearch/pull/51600"></a></li>
+<li>SetSecurityUserProcessor <a href="https://github.com/elastic/elasticsearch/pull/51454"># 51454로</a> 대상 필드를 덮어 쓰지 마십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/51428"># 51428</a> )</li>
+<li>프로세서가 비동기를 실행하는 경우 수집 시뮬레이션 응답 문서 순서 수정 <a href="https://github.com/elastic/elasticsearch/pull/50244"># 50244</a></li>
+<li>geoip 수집 프로세서 <a href="https://github.com/elastic/elasticsearch/pull/49573"># 49573</a> 에서 IP 목록 허용 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/46193"># 46193</a> )</li>
+<li>IAE <a href="https://github.com/elastic/elasticsearch/pull/48816"># 48816을 사용</a> 하여 수집 프로세서 예외를 래핑하지 마십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48810"># 48810</a> )</li>
+<li>전용 수집 프로세서 예외 <a href="https://github.com/elastic/elasticsearch/pull/48810"># 48810</a> 소개 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48803"># 48803</a> )</li>
+</ul>
+<p><strong>기능 / 자바 고급 REST 클라이언트</strong></p>
+<ul>
+<li>es7 노드 http publish_address 형식 <a href="https://github.com/elastic/elasticsearch/pull/49279"># 49279 지원</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48950"># 48950</a> )</li>
+<li>HLRC <a href="https://github.com/elastic/elasticsearch/pull/48420"># 48420</a> 에서 쿼리로 삭제 및 업데이트 할 슬라이스 추가<a href="https://github.com/elastic/elasticsearch/pull/48420"></a></li>
+<li>잘못된 비교 수정 <a href="https://github.com/elastic/elasticsearch/pull/48208"># 48208</a></li>
+<li>CancelTasks 응답 <a href="https://github.com/elastic/elasticsearch/pull/47017"># 47017</a> 의 HLRC 구문 분석 수정<a href="https://github.com/elastic/elasticsearch/pull/47017"></a></li>
+<li>별도의 스케줄러를 사용하여 교착 상태 방지 <a href="https://github.com/elastic/elasticsearch/pull/48697"># 48697</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/41451"># 41451</a> , <a href="https://github.com/elastic/elasticsearch/issues/47599"># 47599</a> )</li>
+</ul>
+<p><strong>기능 / 자바 저수준 REST 클라이언트</strong></p>
+<ul>
+<li>응답에 경고 값 추출 성능 향상 <a href="https://github.com/elastic/elasticsearch/pull/50208"># 50208</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/24114"># 24114</a> )</li>
+</ul>
+<p><strong>기능 / 모니터링</strong></p>
+<ul>
+<li>내보내기 유형이 HTTP 내보내기 <a href="https://github.com/elastic/elasticsearch/pull/49992"># 49992에</a> 대해 HTTP <a href="https://github.com/elastic/elasticsearch/pull/49992">인지 확인</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47246"># 47246</a> , <a href="https://github.com/elastic/elasticsearch/issues/47711"># 47711</a> , <a href="https://github.com/elastic/elasticsearch/issues/49942"># 49942</a> )</li>
+<li>APM system_user <a href="https://github.com/elastic/elasticsearch/pull/47668"># 47668</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/2708"># 2708</a> , <a href="https://github.com/elastic/elasticsearch/issues/40876"># 40876</a> )</li>
+</ul>
+<p><strong>지리</strong></p>
+<ul>
+<li>null geoBoundingBox <a href="https://github.com/elastic/elasticsearch/pull/50506"># 50506 방지</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50505"># 50505</a> )</li>
+<li>Geo : 생성 된 GeoJson 유형 이름을 낙타 케이스로 전환합니다 (# 50285) <a href="https://github.com/elastic/elasticsearch/pull/50400"># 50400</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49568"># 49568</a> )</li>
+<li>지역 : 생성 된 WKT를 대문자 <a href="https://github.com/elastic/elasticsearch/pull/50285"># 50285로 전환</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49568"># 49568</a> )</li>
+<li>GeoPointFieldMapper <a href="https://github.com/elastic/elasticsearch/pull/49645"># 49645</a> 에서 null_value를 할당 할 때 오타 수정<a href="https://github.com/elastic/elasticsearch/pull/49645"></a></li>
+<li>레거시 geo_shape 쿼리 <a href="https://github.com/elastic/elasticsearch/pull/49410"># 49410</a> 에서 서클 처리 문제 <a href="https://github.com/elastic/elasticsearch/pull/49410">수정</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49296"># 49296</a> )</li>
+<li>GEO : geo_shape 검색과 교차하여 잘못된 결과를 반환 함 <a href="https://github.com/elastic/elasticsearch/pull/49017"># 49017</a></li>
+<li>Geo : 라인 스트링 <a href="https://github.com/elastic/elasticsearch/pull/47939"># 47939</a> 의 범위를 벗어난 포인트 처리 개선 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/43916"># 43916</a> )</li>
+</ul>
+<p><strong>강조 표시</strong></p>
+<ul>
+<li>키워드 필드 <a href="https://github.com/elastic/elasticsearch/pull/49566"># 49566</a> 에서 유효하지 않은 break iterator 강조 표시 수정</li>
+</ul>
+<p><strong>인프라 / 코어</strong></p>
+<ul>
+<li><a href="https://github.com/elastic/elasticsearch/pull/51581"># 51581</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49914"># 49914</a> ) 이 사라지는 가상 이더넷 장치 무시</li>
+<li>근본 원인 지원 추측 <a href="https://github.com/elastic/elasticsearch/pull/50525">풀기 # 50525</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50417"># 50417</a> )</li>
+<li>완전히 제공된 시간 <a href="https://github.com/elastic/elasticsearch/pull/50178"># 50178</a> 없이 구문 분석 시간대 허용 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49351"># 49351</a> )</li>
+<li>[Java.time] 포맷터 <a href="https://github.com/elastic/elasticsearch/pull/48703"># 48703</a> 에서 접두사 날짜 패턴 유지 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48698"># 48698</a> )</li>
+<li>jdk8 / windows <a href="https://github.com/elastic/elasticsearch/pull/48657"># 48657</a> 에서 사용자의 MaxDirectMemorySize 플래그를 삭제하지 마십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/44174"># 44174</a> , <a href="https://github.com/elastic/elasticsearch/issues/48365"># 48365</a> )</li>
+<li>MaxDirectMemorySize가 올바르지 않은 경우 경고 (Windows / JDK8 전용 문제) <a href="https://github.com/elastic/elasticsearch/pull/48365"># 48365</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/47384"># 47384</a> )</li>
+<li>[Java.time] ISO 규칙 <a href="https://github.com/elastic/elasticsearch/pull/48209"># 48209</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/41670"># 41670</a> , <a href="https://github.com/elastic/elasticsearch/issues/42588"># 42588</a> , <a href="https://github.com/elastic/elasticsearch/issues/43275"># 43275</a> , <a href="https://github.com/elastic/elasticsearch/issues/43652"># 43652</a> ) 로 1 주일을 계산 합니다.</li>
+</ul>
+<p><strong>인프라 / 로깅</strong></p>
+<ul>
+<li>느린 로그는 각 인덱스 <a href="https://github.com/elastic/elasticsearch/pull/47234"># 47234</a> 에 대해 별도의 기본 로거를 사용해야합니다 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/42432"># 42432</a> )</li>
+</ul>
+<p><strong>인프라 / 포장</strong></p>
+<ul>
+<li>시작 <a href="https://github.com/elastic/elasticsearch/pull/49784"># 49784</a> 중 시스템 시간 초과 연장 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49593"># 49593</a> )</li>
+</ul>
+<p><strong>인프라 / REST API</strong></p>
+<ul>
+<li>잘못된 JSON <a href="https://github.com/elastic/elasticsearch/pull/49552"># 49552를</a> 처리 할 때 400을 반환합니다 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49428"># 49428</a> )</li>
+<li>URL의 indices.put_mapping 놓친 슬래시 <a href="https://github.com/elastic/elasticsearch/pull/49468"># 49468를</a></li>
+</ul>
+<p><strong>기계 학습</strong></p>
+<ul>
+<li>find_file_structure <a href="https://github.com/elastic/elasticsearch/pull/51469"># 51469</a> 에서 2 자리 연도 정규식 수정<a href="https://github.com/elastic/elasticsearch/pull/51469"></a></li>
+<li>분류 <code>dependent_variable</code>카디널리티 검증 이 2 이상인 경우 <a href="https://github.com/elastic/elasticsearch/pull/51232"># 51232</a></li>
+<li>회귀 분석에서 종속 변수에서 예측 필드로의 매핑을 복사하지 마십시오 <a href="https://github.com/elastic/elasticsearch/pull/51227"># 51227</a></li>
+<li>매핑을 복사 할 때 제대로 중첩 및 별칭 필드를 처리 <a href="https://github.com/elastic/elasticsearch/pull/50918"># 50918을</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50787"># 50787</a> )</li>
+<li><code>ml_classic</code>토크 나이저 엔드 오프셋 <a href="https://github.com/elastic/elasticsearch/pull/50655"># 50655의 개별</a> 오류 수정<a href="https://github.com/elastic/elasticsearch/pull/50655"></a></li>
+<li>결과 문서 ID <a href="https://github.com/elastic/elasticsearch/pull/50644"># 50644의</a> 고유성 향상 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50613"># 50613</a> )</li>
+<li>멀티 클래스 혼란 매트릭스에서 수정 정확도 메트릭 <a href="https://github.com/elastic/elasticsearch/pull/50310"># 50310</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48759"># 48759</a> )</li>
+<li><a href="https://github.com/elastic/elasticsearch/pull/50276"># 50276</a> 을 시작한 직후 데이터 프레임 분석 작업을 중지 할 때 경쟁 조건 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49680"># 49680</a> , <a href="https://github.com/elastic/elasticsearch/issues/50177"># 50177</a> )</li>
+<li>데이터 프레임 분석 메모리 추정 <a href="https://github.com/elastic/elasticsearch/pull/49517"># 49517</a> 에 소스 쿼리 적용 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49454"># 49454</a> )</li>
+<li>분산이 0 일 때 r_squared eval 수정 <a href="https://github.com/elastic/elasticsearch/pull/49439"># 49439</a></li>
+<li>많은 예측 필드 이름을 블랙리스트에 <a href="https://github.com/elastic/elasticsearch/issues/48808">올립니다</a> <a href="https://github.com/elastic/elasticsearch/pull/49371"># 49371</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48808"># 48808</a> )</li>
+<li>매우 짧은 수명의 분석을 위해 데이터 프레임 분석을보다 강력하게 만듭니다 <a href="https://github.com/elastic/elasticsearch/pull/49282"># 49282</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49095"># 49095</a> )</li>
+<li>계절성 <a href="https://github.com/elastic/ml-cpp/pull/852"># 852를</a> 결정할 때 잠재적 인 메모리 손상 수정<a href="https://github.com/elastic/ml-cpp/pull/852"></a></li>
+<li><code>prediction_field_name</code>기계 학습 결과의 다른 필드와 충돌 방지 <a href="https://github.com/elastic/ml-cpp/pull/861"># 861</a></li>
+<li>분류 역 검색 <a href="https://github.com/elastic/ml-cpp/pull/950"># 950</a> (문제 : <a href="https://github.com/elastic/ml-cpp/issues/949"># 949</a> ) 에 비 순차적 용어와 비 순차적 용어를 포함</li>
+</ul>
+<p><strong>매핑</strong></p>
+<ul>
+<li>필드 축소가 필드 별명과 함께 작동하는지 확인하십시오. <a href="https://github.com/elastic/elasticsearch/pull/50722"># 50722</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/32648"># 32648</a> , <a href="https://github.com/elastic/elasticsearch/issues/50121"># 50121</a> )</li>
+<li>DateFieldMapper <code>ignore_malformed</code>처리 <a href="https://github.com/elastic/elasticsearch/pull/50090"># 50090</a> 개선 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/46675"># 46675</a> , <a href="https://github.com/elastic/elasticsearch/issues/50081"># 50081</a> )</li>
+<li>주석이 달린 텍스트 유형은 TextFieldType <a href="https://github.com/elastic/elasticsearch/pull/49555"># 49555를</a> 확장해야합니다 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49289"># 49289</a> ).</li>
+<li>병합 된 맵핑을 병합 할 때 매개 변수가 업데이트되는지 확인하십시오. <a href="https://github.com/elastic/elasticsearch/pull/48971"># 48971</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48907"># 48907</a> )</li>
+</ul>
+<p><strong>회로망</strong></p>
+<ul>
+<li>TransportMasterNodeAction이 NodeClosedException <a href="https://github.com/elastic/elasticsearch/pull/51325"># 51325를</a> 다시 시도하지 않는 문제 수정</li>
+</ul>
+<p><strong>여과기</strong></p>
+<ul>
+<li>중첩 된 분리 <a href="https://github.com/elastic/elasticsearch/pull/50669"># 50669에</a> 대한 MSM을 올바르게 처리합니다 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50305"># 50305</a> ).</li>
+<li>용어 및 범위 <a href="https://github.com/elastic/elasticsearch/pull/49803"># 49803</a> 의 혼합 된 결합에 대한 쿼리 분석기 로직 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49684">#</a> <a href="https://github.com/elastic/elasticsearch/pull/49803">49684</a> )</li>
+</ul>
+<p><strong>회복</strong></p>
+<ul>
+<li>복구 <a href="https://github.com/elastic/elasticsearch/pull/50656"># 50656</a> 에서 샤드 실패시 할당 ID 확인 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50508"># 50508</a> )</li>
+<li><a href="https://github.com/elastic/elasticsearch/pull/49448">트랜스 로그</a> 에서 보존리스 <a href="https://github.com/elastic/elasticsearch/pull/49448"># 49448</a> 으로 피어 복구 마이그레이션 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/45136"># 45136</a> )</li>
+<li><a href="https://github.com/elastic/elasticsearch/pull/49114">트랜스 로그가</a> 손상된 경우 피어 복구에서 Lucene 인덱스 무시 <a href="https://github.com/elastic/elasticsearch/pull/49114"># 49114</a></li>
+</ul>
+<p><strong>재색 인</strong></p>
+<ul>
+<li>RED 샤드 <a href="https://github.com/elastic/elasticsearch/pull/45830"># 45830에서 색인 재 작성</a> 및 친구 실패 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/42612"># 42612</a> , <a href="https://github.com/elastic/elasticsearch/issues/45739"># 45739</a> )</li>
+</ul>
+<p><strong>SQL</strong></p>
+<ul>
+<li>SQL : <a href="https://github.com/elastic/elasticsearch/pull/51675"># 51675</a> 간격으로 밀리 초 처리 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/41635"># 41635</a> )</li>
+<li>SQL : ORDER BY YEAR () 함수 <a href="https://github.com/elastic/elasticsearch/pull/51562"># 51562 수정</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/51224"># 51224</a> )</li>
+<li>SQL : 지원되지 않는 데이터 형식 필드 처리 방식 변경 <a href="https://github.com/elastic/elasticsearch/pull/50823"># 50823</a></li>
+<li>SQL : 결합 병합 <a href="https://github.com/elastic/elasticsearch/pull/50703"># 50703에</a> 대한 최적화 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49637">#</a> <a href="https://github.com/elastic/elasticsearch/pull/50703">49637</a> )</li>
+<li>SQL : CAST 및 NULL 검사 문제 수정. <a href="https://github.com/elastic/elasticsearch/pull/50371"># 50371</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50191"># 50191</a> )</li>
+<li>SQL : JdbcResultSet.getDate (param, Calendar) 호출에 대한 NPE 수정 <a href="https://github.com/elastic/elasticsearch/pull/50184"># 50184</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50174"># 50174</a> )</li>
+<li>SQL : COUNT DISTINCT는 일치하는 문서 <a href="https://github.com/elastic/elasticsearch/pull/50037"># 50037에</a> 대해 NULL 대신 0을 리턴합니다 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50013"># 50013</a> )</li>
+<li>LOCATE 기능 선택적 매개 변수 처리 <a href="https://github.com/elastic/elasticsearch/pull/49666"># 49666 수정</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49557">#</a> <a href="https://github.com/elastic/elasticsearch/pull/49666">49557</a> )</li>
+<li>FLOOR 및 CEIL 함수 <a href="https://github.com/elastic/elasticsearch/pull/49644"># 49644에</a> 대한 NULL 처리 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49556"># 49556</a> )</li>
+<li>INTERVAL <a href="https://github.com/elastic/elasticsearch/pull/49633"># 49633으로</a> NULL 산술 연산 처리 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49297"># 49297</a> )</li>
+<li>GROUP BY YEAR ()와 수정 문제 <a href="https://github.com/elastic/elasticsearch/pull/49559"># 49559</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49386"># 49386</a> )</li>
+<li>CASE / IIF 사전 계산 결과 <a href="https://github.com/elastic/elasticsearch/pull/49553"># 49553</a> 관련 문제 <a href="https://github.com/elastic/elasticsearch/pull/49553">수정</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49388"># 49388</a> )</li>
+<li>CASE / IIF <a href="https://github.com/elastic/elasticsearch/pull/49449"># 49449</a> 접기 문제 해결 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49387"># 49387</a> )</li>
+<li>WEEK / ISO_WEEK / DATEDIFF <a href="https://github.com/elastic/elasticsearch/pull/49405"># 49405</a> 관련 문제 <a href="https://github.com/elastic/elasticsearch/pull/49405">수정</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48209"># 48209</a> , <a href="https://github.com/elastic/elasticsearch/issues/49376"># 49376</a> )</li>
+<li>SQL : DATEDIFF <a href="https://github.com/elastic/elasticsearch/pull/49252"># 49252의</a> 분 및 시간 문제 수정<a href="https://github.com/elastic/elasticsearch/pull/49252"></a></li>
+<li>SQL : 다른 ExpressionIds <a href="https://github.com/elastic/elasticsearch/pull/43072"># 43072</a> 로 인한 그룹 별 쿼리 실패 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/33361"># 33361</a> , <a href="https://github.com/elastic/elasticsearch/issues/34543"># 34543</a> , <a href="https://github.com/elastic/elasticsearch/issues/36074"># 36074</a> , <a href="https://github.com/elastic/elasticsearch/issues/37044"># 37044</a> , <a href="https://github.com/elastic/elasticsearch/issues/40001"># 40001</a> , <a href="https://github.com/elastic/elasticsearch/issues/40240"># 40240</a> , <a href="https://github.com/elastic/elasticsearch/issues/41159"># 41159</a> , <a href="https://github.com/elastic/elasticsearch/issues/42041"># 42041</a> , <a href="https://github.com/elastic/elasticsearch/issues/46316"># 46316</a> )</li>
+</ul>
+<p><strong>검색</strong></p>
+<ul>
+<li>사용자 정의 유사성 <a href="https://github.com/elastic/elasticsearch/pull/50851"># 50851의</a> 업그레이드 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50763"># 50763</a> )</li>
+<li>NPE 버그 inner_hits <a href="https://github.com/elastic/elasticsearch/pull/50709"># 50709</a> 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50539"># 50539</a> )</li>
+<li>부분 결과 <a href="https://github.com/elastic/elasticsearch/pull/49828"># 49828을</a> 통지 할 때 로컬 목록에 결과 수집 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49778"># 49778</a> )</li>
+<li>인터벌 필터 직렬화 <a href="https://github.com/elastic/elasticsearch/pull/49793"># 49793</a> 의 버그 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49519"># 49519</a> )</li>
+<li>정렬되지 않은 간격 일치에서 중복을 올바르게 처리합니다. <a href="https://github.com/elastic/elasticsearch/pull/49775"># 49775</a></li>
+<li>script_score 쿼리 <a href="https://github.com/elastic/elasticsearch/pull/48425">#</a> 48425의 올바른 다시 <a href="https://github.com/elastic/elasticsearch/pull/48425">쓰기</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48081"># 48081</a> )</li>
+<li>SearchAfterBuilder <a href="https://github.com/elastic/elasticsearch/pull/48147"># 48147</a> 에서 알 수없는 유형에 오류를 발생시키지 마십시오 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48074"># 48074</a> )</li>
+</ul>
+<p><strong>보안</strong></p>
+<ul>
+<li>항상 신체를 소비합니다 <a href="https://github.com/elastic/elasticsearch/pull/50298"># 50298</a> 권한 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50288"># 50288</a> )</li>
+</ul>
+<p><strong>스냅 샷 / 복원</strong></p>
+<ul>
+<li>지나치게 공격적인 요청 중복 제거 <a href="https://github.com/elastic/elasticsearch/pull/51270"># 51270</a> 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/51253"># 51253</a> )</li>
+<li>예외 throw <a href="https://github.com/elastic/elasticsearch/pull/50970"># 50970에</a> 대한 Guard Repository # <a href="https://github.com/elastic/elasticsearch/pull/50970">getRepositoryData</a></li>
+<li>부분 스냅 샷 생성 중 인덱스 삭제 수정 <a href="https://github.com/elastic/elasticsearch/pull/50234"># 50234</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50200"># 50200</a> , <a href="https://github.com/elastic/elasticsearch/issues/50202"># 50202</a> )</li>
+<li>Snapshot Finalization <a href="https://github.com/elastic/elasticsearch/pull/50202"># 50202</a> 중 인덱스 삭제 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/45689"># 45689</a> , <a href="https://github.com/elastic/elasticsearch/issues/50200"># 50200</a> )</li>
+<li>Master-Failover <a href="https://github.com/elastic/elasticsearch/pull/49217"># 49217</a> 에서 RepoCleanup이 제거되지 않는 문제 수정<a href="https://github.com/elastic/elasticsearch/pull/49217"></a></li>
+<li>FsBlobContainer 리스팅을 동시 수정에 탄력적으로 작성 <a href="https://github.com/elastic/elasticsearch/pull/49142"># 49142</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/37581"># 37581</a> )</li>
+<li>실패한 샤드 <a href="https://github.com/elastic/elasticsearch/pull/48556"># 48556에</a> 대한 SnapshotShardStatus보고 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48526"># 48526</a> )</li>
+<li>정리 동시 저장소 데이터로드 <a href="https://github.com/elastic/elasticsearch/pull/48329"># 48329</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48122"># 48122</a> )</li>
+</ul>
+<p><strong>변환</strong></p>
+<ul>
+<li>scaled_float <a href="https://github.com/elastic/elasticsearch/pull/51990"># 51990에</a> 대한 매핑 공제 수정 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/51780"># 51780</a> )</li>
+<li>보안이 활성화 된 경우 수정 통계가 이전 상태 정보를 반환 할 수 있음 <a href="https://github.com/elastic/elasticsearch/pull/51732"># 51732</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/51728"># 51728</a> )</li>
+<li>누락 된 파이프 라인 <a href="https://github.com/elastic/elasticsearch/pull/50701"># 50701</a> 에서 시작 / 실패하지 <a href="https://github.com/elastic/elasticsearch/pull/50701">못함</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/50135"># 50135</a> )</li>
+<li>롤링 업그레이드 <a href="https://github.com/elastic/elasticsearch/pull/49731"># 49731</a> 후 발생 가능한 감사 로깅 <a href="https://github.com/elastic/elasticsearch/pull/49731">누락</a> 문제 (문제 : <a href="https://github.com/elastic/elasticsearch/issues/49730"># 49730</a> )</li>
+<li>전역 검사 점 불일치로 인해 검사 점 생성에 실패하지 않음 <a href="https://github.com/elastic/elasticsearch/pull/48423"># 48423</a> (문제 : <a href="https://github.com/elastic/elasticsearch/issues/48379"># 48379</a> )</li>
+</ul>
+<h1 id="업그레이드">업그레이드</h1>
+<p><strong>엔진</strong></p>
+<ul>
+<li>Lucene 8.4.0으로 업그레이드하십시오. <a href="https://github.com/elastic/elasticsearch/pull/50518"># 50518</a></li>
+</ul>
+<p><strong>인프라 / 포장</strong></p>
+<ul>
+<li>번들로 제공되는 JDK를 JDK 13.0.2로 업그레이드하십시오. <a href="https://github.com/elastic/elasticsearch/pull/51511"># 51511</a></li>
+</ul>
+
+	
+		<style>
+  .feedback--answer {
+    display: inline-block;
+  }
+  .feedback--answer-no {
+    margin-left: 1em;
+  }
+  .feedback--response {
+    display: none;
+    margin-top: 1em;
+  }
+  .feedback--response__visible {
+    display: block;
+  }
+</style>
+<h2 class="feedback--title">Feedback</h2>
+<p class="feedback--question">Was this page helpful?</p>
+<button class="feedback--answer feedback--answer-yes">Yes</button>
+<button class="feedback--answer feedback--answer-no">No</button>
+<p class="feedback--response feedback--response-yes">
+  Glad to hear it! Please <a href="https://github.com/boijodoc/wiki/issues/new">tell us how we can improve</a>.
+</p>
+<p class="feedback--response feedback--response-no">
+  Sorry to hear that. Please <a href="https://github.com/boijodoc/wiki/issues/new">tell us how we can improve</a>.
+</p>
+<script>
+  const yesButton = document.querySelector('.feedback--answer-yes');
+  const noButton = document.querySelector('.feedback--answer-no');
+  const yesResponse = document.querySelector('.feedback--response-yes');
+  const noResponse = document.querySelector('.feedback--response-no');
+  const disableButtons = () => {
+    yesButton.disabled = true;
+    noButton.disabled = true;
+  };
+  const sendFeedback = (value) => {
+    if (typeof ga !== 'function') return;
+    const args = {
+      command: 'send',
+      hitType: 'event',
+      category: 'Helpful',
+      action: 'click',
+      label: window.location.pathname,
+      value: value
+    };
+    ga(args.command, args.hitType, args.category, args.action, args.label, args.value);
+  };
+  yesButton.addEventListener('click', () => {
+    yesResponse.classList.add('feedback--response__visible');
+    disableButtons();
+    sendFeedback(1);
+  });
+  noButton.addEventListener('click', () => {
+    noResponse.classList.add('feedback--response__visible');
+    disableButtons();
+    sendFeedback(0);
+  });
+</script>
+
+		<br />
+	
+	
+	<div class="text-muted mt-5 pt-3 border-top">최종 수정 April 19, 2020
+</div>
+</div>
+
+
+          </main>
+        </div>
+      </div>
+      
+<footer class="bg-dark py-5 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+        
+      </div>
+      <div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+        
+      </div>
+      <div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+        <small class="text-white">&copy; 2020 Team Boijo All Rights Reserved</small>
+        
+	
+		<p class="mt-2"><a href="/about/">프로젝트 소개</a></p>
+	
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    </div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+
+
+
+
+
+
+<script src="/js/main.min.1a75e66ffc8585bf06ae0d1b21b81023d2b293523f8303c93498ce8297c7a86d.js" integrity="sha256-GnXmb/yFhb8Grg0bIbgQI9Kyk1I/gwPJNJjOgpfHqG0=" crossorigin="anonymous"></script>
+
+
+
+  </body>
+</html>
